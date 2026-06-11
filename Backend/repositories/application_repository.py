@@ -1,5 +1,5 @@
 import sqlite3
-from models.application import WriteApplication, UpdateApplication, ReadApplication, BaseApplication
+from models.application import WriteApplication, UpdateApplication, ReadApplication
 import datetime
 
 BASE_APPLICATION_QUERY = '''
@@ -10,6 +10,7 @@ BASE_APPLICATION_QUERY = '''
                     application.URL as url,
                     status.id as status_id,
                     status.name as status_name,
+                    phase.id as phase_id,
                     phase.name as phase_name,
                     application.date_added as date_added,
                     application.date_appointment as date_appointment
@@ -29,6 +30,7 @@ def _map_row_to_application(row) -> ReadApplication:
             "id": row["status_id"],
             "name": row["status_name"],
             "phase": {
+                "id": row["phase_id"],
                 "name": row["phase_name"],
             }
         },

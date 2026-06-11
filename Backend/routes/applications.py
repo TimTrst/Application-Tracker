@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
+from typing import Annotated
 from models.application import ReadApplication, WriteApplication, UpdateApplication
 from database.database import get_db
 from repositories.application_repository import get_all_applications, get_application_by_id, add_application, remove_application, modify_application
@@ -12,7 +13,7 @@ def read_applications(conn=Depends(get_db)):
 
 
 @router.get("/{id}", response_model=ReadApplication)
-def read_application(id: int, conn=Depends(get_db)):
+def read_application(id: Annotated[int, Path(gt=0)], conn=Depends(get_db)):
     try:
         application = get_application_by_id(id, conn)
 
@@ -33,7 +34,7 @@ def write_application(application: WriteApplication, conn=Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/")
+@router.delete("/{id}")
 def delete_application(id: int, conn=Depends(get_db)):
     try:
         if not remove_application(id, conn):
@@ -46,7 +47,7 @@ def delete_application(id: int, conn=Depends(get_db)):
 
 
 @router.patch("/{id}", response_model=ReadApplication)
-def update_application(id: int, updated_application: UpdateApplication, conn=Depends(get_db)):
+def update_application(id: Annotated[int, Path(gt=0)], updated_application: UpdateApplication, conn=Depends(get_db)):
     try:
         updated_application = modify_application(id, updated_application, conn)
         if not updated_application:
