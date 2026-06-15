@@ -83,9 +83,6 @@ def modify_status(id: int, updated_status: UpdateStatus, conn: sqlite3.Connectio
 
     old_status = get_status_by_id(id, conn)
 
-    print("old", old_status)
-    print("new", data_to_update)
-
     merged_status = {
         "name": old_status.name,
         "phase_id": old_status.phase.id
@@ -97,9 +94,7 @@ def modify_status(id: int, updated_status: UpdateStatus, conn: sqlite3.Connectio
 
     cursor = conn.cursor()
 
-    cursor.execute(sql,
-                   (merged_status["name"], merged_status["phase_id"], id)
-                   )
+    cursor.execute(sql, (merged_status["name"], merged_status["phase_id"], id))
 
     conn.commit()
 

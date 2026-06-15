@@ -35,7 +35,7 @@ def write_status(status: WriteStatus, conn=Depends(get_db)):
 
 
 @router.delete("/{id}")
-def delete_status(id: int, conn=Depends(get_db)):
+def delete_status(id: Annotated[int, Path(gt=0)], conn=Depends(get_db)):
     try:
         if not remove_status(id, conn):
             raise HTTPException(

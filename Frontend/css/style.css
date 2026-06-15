@@ -1,0 +1,51 @@
+#applications-list {
+  display: flex;
+  border: 2px solid #333333;
+  background-color: rgb(141, 117, 117);
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 10px;
+  overflow: hidden;
+  padding: 5%;
+  margin: auto;
+  max-width: 80em;
+}
+
+.kanban-column-flex-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  max-width: 500px;
+  flex: 1 1 250px;
+}
+
+.application-card-flex-container {
+  display: flex;
+  border: 2px solid #333333;
+  box-sizing: border-box;
+  padding: 15px;
+  background-color: rgb(184, 193, 200);
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.kanban-column-header {
+  text-align: center;
+  font-size: 20px;
+}
+
+.application-header {
+  background-color: bisque;
+}
+
+.application-body {
+}
+
+.application-footer {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  padding: 5%;
+  background-color: rgb(111, 198, 242);
+  justify-content: space-evenly;
+}

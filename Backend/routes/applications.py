@@ -35,7 +35,7 @@ def write_application(application: WriteApplication, conn=Depends(get_db)):
 
 
 @router.delete("/{id}")
-def delete_application(id: int, conn=Depends(get_db)):
+def delete_application(id: Annotated[int, Path(gt=0)], conn=Depends(get_db)):
     try:
         if not remove_application(id, conn):
             raise HTTPException(
