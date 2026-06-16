@@ -25,3 +25,13 @@ export async function postApplication(application) {
   });
   return await response.json();
 }
+
+export async function deleteApplication(id) {
+  const response = await fetch(
+    `${CONFIG.API_BASE_URL}/api/applications/${id}`,
+    {
+      method: "DELETE",
+    },
+  );
+  return await response.json();
+}

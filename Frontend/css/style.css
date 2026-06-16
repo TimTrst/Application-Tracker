@@ -1,3 +1,13 @@
+.app-body {
+  display: grid;
+}
+
+#app-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 #applications-list {
   display: flex;
   border: 2px solid #333333;
@@ -11,15 +21,7 @@
   max-width: 80em;
 }
 
-.kanban-column-flex-container {
-  display: flex;
-  flex-direction: column;
-  min-width: 250px;
-  max-width: 500px;
-  flex: 1 1 250px;
-}
-
-.application-card-flex-container {
+.kanban-card {
   display: flex;
   border: 2px solid #333333;
   box-sizing: border-box;
@@ -29,9 +31,21 @@
   justify-content: space-between;
 }
 
+.kanban-column-flex-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  max-width: 500px;
+  flex: 1 1 250px;
+}
+
+.application-card-flex-container {
+}
+
 .kanban-column-header {
   text-align: center;
-  font-size: 20px;
+  font-size: large;
+  font-weight: bold;
 }
 
 .application-header {
@@ -48,4 +62,31 @@
   padding: 5%;
   background-color: rgb(111, 198, 242);
   justify-content: space-evenly;
+}
+
+#application-create-form {
+}
+
+.delete-application-dialog-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(76, 150, 215, 0.735);
+}
+
+.delete-application-dialog {
+  border: 2px solid #393939;
+  padding: 20px;
+  height: 100px;
+  width: 160px;
+  background-color: white;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+}
+
+.application-container-create {
 }
