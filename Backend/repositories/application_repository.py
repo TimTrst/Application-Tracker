@@ -1,5 +1,6 @@
 import sqlite3
 from models.application import WriteApplication, UpdateApplication, ReadApplication
+from repositories.helper import url_to_httpurl
 import datetime
 
 BASE_APPLICATION_QUERY = '''
@@ -25,7 +26,7 @@ def _map_row_to_application(row) -> ReadApplication:
         "id": row["id"],
         "company_name": row["company_name"],
         "job_title": row["job_title"],
-        "url": row["url"],
+        "url": url_to_httpurl(row["url"]),
         "status": {
             "id": row["status_id"],
             "name": row["status_name"],
@@ -71,7 +72,7 @@ def add_application(new_application: WriteApplication, conn: sqlite3.Connection)
     cursor.execute(sql,
                    (new_application.company_name,
                     new_application.job_title,
-                    new_application.url,
+                    str(new_application.url) if new_application.url else None,
                     new_application.status_id,
                     datetime.datetime.now().date(),
                     new_application.date_appointment)

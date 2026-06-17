@@ -74,8 +74,6 @@ export function renderApplicationKanban(
         return state["phase"]["id"].toString() === phase_id;
       });
 
-      console.log(phase_id);
-
       const kanban_phase_column_container = document.querySelector(
         `[data-phase-id="${phase_id}"]`,
       );

@@ -19,14 +19,14 @@ export function createApplicationForm(
       }),
     );
 
-  const application_submit_button = create_application_form.querySelectorAll(
-    ".application-form-submit",
-  );
-
-  application_submit_button.forEach((btn) =>
-    btn.addEventListener("click", async (e) => {
+  create_application_form
+    .querySelector("form")
+    .addEventListener("submit", async (e) => {
       e.preventDefault();
-      const container = e.target.closest("form");
+
+      // currentTarget refers to the element that the listener was attached to (the form in this case)
+      const container = e.currentTarget.closest("form");
+
       const company_name = container.querySelector(".cname").value;
       const job_title = container.querySelector(".jname").value;
       const job_url = container.querySelector(".jurl").value;
@@ -37,33 +37,31 @@ export function createApplicationForm(
       let new_application = {
         company_name: "",
         job_title: "",
-        url: "",
+        url: null,
         status_id: 1,
         date_appointment: "",
       };
 
       new_application.company_name = company_name;
       new_application.job_title = job_title;
-      new_application.url = job_url;
+      new_application.url = job_url ? job_url : null;
       new_application.status_id = status_id;
-      new_application.date_appointment = application_appointment;
-
-      console.log(new_application);
+      new_application.date_appointment =
+        application_appointment !== "" ? application_appointment : null;
 
       createFormCallback(new_application);
-    }),
-  );
+    });
 }
 
 function renderApplicationInputs(statuses_list) {
   return `
     <form>
         <label for="cname">Company Name:</label><br>
-        <input class="cname" type="text"></input><br>
+        <input required minlength="3" maxlength="30" class="cname" type="text"><br>
         <label for="jname">Job Title:</label><br>
-        <input class="jname" type="text"></input><br>
+        <input required minlength="3" maxlength="30" class="jname" type="text"><br>
         <label for="jurl">URL:</label><br>
-        <input class="jurl" type="text"></input><br>
+        <input class="jurl" type="url"><br>
         <label for="status-select">Status:</label><br>
         <select class="astatus_id" name="status">
             ${statuses_list
@@ -73,8 +71,8 @@ function renderApplicationInputs(statuses_list) {
               .join("")}
         </select><br>
         <label for="jappointment">Next Appointment:</label><br>
-        <input class="jappointment" type="date"></input><br>
-        <input class="application-form-submit" type="submit" value="Create Application"></input>
+        <input class="jappointment" type="date"><br>
+        <input class="application-form-submit" type="submit" value="Create Application">
         <button class="application-form-close" type="button">Close</button>
     </form>
     `;
