@@ -9,8 +9,12 @@ import { renderApplicationKanban } from "./ui/applicationsKanaban.js";
 import { createApplicationForm } from "./ui/createApplicationForm.js";
 
 async function createFormCallback(new_application) {
-  const response = await postApplication(new_application);
-  refreshKanban();
+  try {
+    const response = await postApplication(new_application);
+    refreshKanban();
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function deleteApplicationCallback(application_id) {

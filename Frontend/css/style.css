@@ -2,6 +2,10 @@
   display: grid;
 }
 
+.hidden {
+  display: none !important;
+}
+
 #app-header {
   display: flex;
   flex-direction: row;
@@ -39,9 +43,6 @@
   flex: 1 1 250px;
 }
 
-.application-card-flex-container {
-}
-
 .kanban-column-header {
   text-align: center;
   font-size: large;
@@ -52,9 +53,6 @@
   background-color: bisque;
 }
 
-.application-body {
-}
-
 .application-footer {
   display: flex;
   flex-direction: row;
@@ -62,9 +60,6 @@
   padding: 5%;
   background-color: rgb(111, 198, 242);
   justify-content: space-evenly;
-}
-
-#application-create-form {
 }
 
 .delete-application-dialog-background {
@@ -89,4 +84,16 @@
 }
 
 .application-container-create {
+}
+
+.create-application-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.application-create-form-field label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

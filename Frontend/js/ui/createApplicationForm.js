@@ -3,22 +3,30 @@ export function createApplicationForm(
   statuses_list,
   createFormCallback,
 ) {
-  // const container = document.getElementById("application-create-form");
-
+  // div to render the form into
   const create_application_form = document.createElement("div");
 
-  create_application_form.innerHTML = renderApplicationInputs(statuses_list);
+  create_application_form.innerHTML = renderApplicationForm(statuses_list);
 
   container_to_insert_html.appendChild(create_application_form);
 
+  // listen to any close event on application forms
+  // remove the form
+  // turn form create button visible again
   create_application_form
     .querySelectorAll(".application-form-close")
     .forEach((btn) =>
       btn.addEventListener("click", (e) => {
+        const formContainer = e.currentTarget.closest(".kanban-card");
+        const application_create_button = formContainer.querySelector(
+          ".application-button-create.hidden",
+        );
         create_application_form.remove();
+        application_create_button.classList.remove("hidden");
       }),
     );
 
+  // listen to the form submit
   create_application_form
     .querySelector("form")
     .addEventListener("submit", async (e) => {
@@ -30,7 +38,7 @@ export function createApplicationForm(
       const company_name = container.querySelector(".cname").value;
       const job_title = container.querySelector(".jname").value;
       const job_url = container.querySelector(".jurl").value;
-      const status_id = container.querySelector(".astatus_id").value;
+      const status_id = container.querySelector(".astatus").value;
       const application_appointment =
         container.querySelector(".jappointment").value;
 
@@ -49,29 +57,49 @@ export function createApplicationForm(
       new_application.date_appointment =
         application_appointment !== "" ? application_appointment : null;
 
-      createFormCallback(new_application);
+      await createFormCallback(new_application);
     });
 }
 
-function renderApplicationInputs(statuses_list) {
+// render the form
+function renderApplicationForm(statuses_list) {
   return `
-    <form>
-        <label for="cname">Company Name:</label><br>
-        <input required minlength="3" maxlength="30" class="cname" type="text"><br>
-        <label for="jname">Job Title:</label><br>
-        <input required minlength="3" maxlength="30" class="jname" type="text"><br>
-        <label for="jurl">URL:</label><br>
-        <input class="jurl" type="url"><br>
-        <label for="status-select">Status:</label><br>
-        <select class="astatus_id" name="status">
-            ${statuses_list
-              .map((status) => {
-                return `<option value="${status["id"]}">${status["name"]}</option>`;
-              })
-              .join("")}
-        </select><br>
-        <label for="jappointment">Next Appointment:</label><br>
-        <input class="jappointment" type="date"><br>
+    <form class="create-application-form">
+        <div>
+          <label>
+            Company Name:
+            <input required minlength="3" maxlength="30" class="cname" name="cname" type="text">
+          </label>
+        </div>
+        <div class="application-create-form-field">
+          <label>
+            Job Title:
+            <input required minlength="3" maxlength="30" class="jname" name="jname" type="text">
+          </label>
+        </div>
+        <div class="application-create-form-field">
+          <label>
+            URL:
+            <input class="jurl" name="jurl" type="url">
+          </label>
+        </div>
+        <div class="application-create-form-field">
+          <label>
+          Status:
+            <select class="astatus" name="status">
+                ${statuses_list
+                  .map((status) => {
+                    return `<option value="${status["id"]}">${status["name"]}</option>`;
+                  })
+                  .join("")}
+            </select>
+          </label>
+        </div>
+        <div class="application-create-form-field">
+          <label>Next Appointment:
+            <input class="jappointment" name="jappointment" type="date">
+          </label>
+        </div>
         <input class="application-form-submit" type="submit" value="Create Application">
         <button class="application-form-close" type="button">Close</button>
     </form>

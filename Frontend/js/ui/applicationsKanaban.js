@@ -67,7 +67,9 @@ export function renderApplicationKanban(
 
   document.querySelectorAll(".application-button-create").forEach((btn) =>
     btn.addEventListener("click", async (e) => {
-      const phase_id = e.target.parentNode.dataset.phaseId;
+      const phase_id = e.currentTarget.parentNode.dataset.phaseId;
+      const create_button = e.currentTarget;
+      create_button.classList.add("hidden");
       const statuses = await getApplicationStatusesCallback();
 
       const statuses_for_phase = statuses.filter((state) => {

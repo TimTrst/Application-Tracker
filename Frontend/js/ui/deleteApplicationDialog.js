@@ -21,13 +21,11 @@ export function deleteApplicationDialog(
 
   confirm_button.addEventListener("click", async (e) => {
     deleteApplicationCallback(application_id);
-    console.log("Deleted");
 
     document.body.removeChild(confirmDialogBackground);
   });
 
   cancel_button.addEventListener("click", (e) => {
-    console.log("Cancelled");
     document.body.removeChild(confirmDialogBackground);
   });
 }
