@@ -29,48 +29,56 @@ function createHTMLPhaseColumn(phase) {
 export function renderApplicationKanban(
   applications,
   phases,
+  statuses,
   createFormCallback,
   deleteApplicationCallback,
   getApplicationStatusesCallback,
 ) {
   const container = document.getElementById("applications-list");
 
-  phases.forEach((phase) => {
-    applications.forEach((application) => {
-      if (phase["name"] === application["status"]["phase"]["name"]) {
-        if (!Object.hasOwn(phase, "applications")) {
-          phase["applications"] = [];
-        }
+  const phases_with_applications = new Map();
 
-        phase["applications"].push(application);
-      }
+  phases.forEach((phase) => {
+    phases_with_applications.set(phase["name"], {
+      ...phase,
+      applications: [],
     });
+  });
+
+  applications.forEach((application) => {
+    let application_phase = application["status"]["phase"];
+    let application_phase_name = application_phase["name"];
+
+    phases_with_applications
+      .get(application_phase_name)
+      .applications.push(application);
   });
 
   container.innerHTML = `
-        ${phases
-          .map((phase) => {
-            return createHTMLPhaseColumn(phase);
-          })
-          .join("")}
-    `;
+    ${[...phases_with_applications.values()]
+      .map((phase) => createHTMLPhaseColumn(phase))
+      .join("")}
+  `;
 
-  document.querySelectorAll(".application-button-delete").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const application_id = e.target.dataset.appId;
+  document
+    .querySelectorAll(".application-card-button-delete")
+    .forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const application_id = e.target.dataset.appId;
 
-      if (!document.querySelector(".delete-application-dialog")) {
-        deleteApplicationDialog(application_id, deleteApplicationCallback);
-      }
+        if (!document.querySelector(".delete-application-dialog")) {
+          deleteApplicationDialog(application_id, deleteApplicationCallback);
+        }
+      });
     });
-  });
 
   document.querySelectorAll(".application-button-create").forEach((btn) =>
     btn.addEventListener("click", async (e) => {
       const phase_id = e.currentTarget.parentNode.dataset.phaseId;
       const create_button = e.currentTarget;
       create_button.classList.add("hidden");
-      const statuses = await getApplicationStatusesCallback();
+
+      // const statuses = await getApplicationStatusesCallback();
 
       const statuses_for_phase = statuses.filter((state) => {
         return state["phase"]["id"].toString() === phase_id;
