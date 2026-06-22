@@ -3,7 +3,7 @@ import { deleteApplicationDialog } from "./deleteApplicationDialog.js";
 import { createApplicationForm } from "./createApplicationForm.js";
 
 function createHTMLPhaseColumn(phase) {
-  let phase_column_html = `<div class="kanban-column-flex-container">`;
+  let phase_column_html = `<div class="kanban-column-flex-container" data-phase-id="${phase["id"]}">`;
 
   let phase_header = `<div class="kanban-column-header">`;
 
@@ -30,10 +30,12 @@ export function renderApplicationKanban(
   applications,
   phases,
   statuses,
-  createFormCallback,
+  createApplicationCallback,
   deleteApplicationCallback,
-  getApplicationStatusesCallback,
+  updateApplicationCallback,
 ) {
+  console.log(applications);
+
   const container = document.getElementById("applications-list");
 
   const phases_with_applications = new Map();
@@ -60,11 +62,18 @@ export function renderApplicationKanban(
       .join("")}
   `;
 
+  function getStatusesByPhaseId(phase_id) {
+    return statuses.filter((state) => {
+      return state["phase"]["id"].toString() === phase_id;
+    });
+  }
+
   document
     .querySelectorAll(".application-card-button-delete")
     .forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        const application_id = e.target.dataset.appId;
+        const application_card = e.target.closest(".application-card");
+        const application_id = application_card.dataset.appId;
 
         if (!document.querySelector(".delete-application-dialog")) {
           deleteApplicationDialog(application_id, deleteApplicationCallback);
@@ -72,26 +81,46 @@ export function renderApplicationKanban(
       });
     });
 
+  document
+    .querySelectorAll(".application-card-button-change")
+    .forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const kanban_card = e.target.closest(".kanban-card");
+        const application_card = e.target.closest(".application-card");
+        const application_id = application_card.dataset.appId;
+        const application_object = applications.find(
+          (application) => application.id == application_id,
+        );
+        const phase_column = e.target.closest(".kanban-column-flex-container");
+        const phase_id = phase_column.dataset.phaseId;
+        const statuses_for_phase = getStatusesByPhaseId(phase_id);
+
+        application_card.classList.add("hidden");
+
+        createApplicationForm(
+          kanban_card,
+          statuses_for_phase,
+          application_card,
+          updateApplicationCallback,
+          application_object,
+        );
+      });
+    });
+
   document.querySelectorAll(".application-button-create").forEach((btn) =>
     btn.addEventListener("click", async (e) => {
-      const phase_id = e.currentTarget.parentNode.dataset.phaseId;
+      const application_card = e.currentTarget.parentNode;
+      const phase_id = application_card.dataset.phaseId;
       const create_button = e.currentTarget;
+      const statuses_for_phase = getStatusesByPhaseId(phase_id);
+
       create_button.classList.add("hidden");
 
-      // const statuses = await getApplicationStatusesCallback();
-
-      const statuses_for_phase = statuses.filter((state) => {
-        return state["phase"]["id"].toString() === phase_id;
-      });
-
-      const kanban_phase_column_container = document.querySelector(
-        `[data-phase-id="${phase_id}"]`,
-      );
-
       createApplicationForm(
-        kanban_phase_column_container,
+        application_card,
         statuses_for_phase,
-        createFormCallback,
+        create_button,
+        createApplicationCallback,
       );
     }),
   );

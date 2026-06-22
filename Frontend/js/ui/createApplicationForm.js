@@ -1,12 +1,17 @@
 export function createApplicationForm(
   container_to_insert_html,
   statuses_list,
-  createFormCallback,
+  element_to_restore,
+  submitCallback,
+  application_object = {},
 ) {
   // div to render the form into
   const create_application_form = document.createElement("div");
 
-  create_application_form.innerHTML = renderApplicationForm(statuses_list);
+  create_application_form.innerHTML = renderApplicationForm(
+    statuses_list,
+    application_object,
+  );
 
   container_to_insert_html.appendChild(create_application_form);
 
@@ -18,11 +23,9 @@ export function createApplicationForm(
     .forEach((btn) =>
       btn.addEventListener("click", (e) => {
         const formContainer = e.currentTarget.closest(".kanban-card");
-        const application_create_button = formContainer.querySelector(
-          ".application-button-create.hidden",
-        );
+
         create_application_form.remove();
-        application_create_button.classList.remove("hidden");
+        element_to_restore.classList.remove("hidden");
       }),
     );
 
@@ -57,30 +60,37 @@ export function createApplicationForm(
       new_application.date_appointment =
         application_appointment !== "" ? application_appointment : null;
 
-      await createFormCallback(new_application);
+      await submitCallback(new_application, application_object.id);
     });
 }
 
 // render the form
-function renderApplicationForm(statuses_list) {
+function renderApplicationForm(statuses_list, application) {
+  let date = "";
+
+  if (Object.keys(application).length !== 0) {
+    date = new Date(application.date_appointment);
+    date = date.toISOString().slice(0, 10);
+  }
+
   return `
     <form class="create-application-form">
         <div>
           <label>
             Company Name:
-            <input required minlength="3" maxlength="30" class="cname" name="cname" type="text">
+            <input required minlength="3" maxlength="40" class="cname" name="cname" type="text" value="${application.company_name || ""}">
           </label>
         </div>
         <div class="application-create-form-field">
           <label>
             Job Title:
-            <input required minlength="3" maxlength="30" class="jname" name="jname" type="text">
+            <input required minlength="3" maxlength="40" class="jname" name="jname" type="text" value="${application.job_title || ""}">
           </label>
         </div>
         <div class="application-create-form-field">
           <label>
             URL:
-            <input class="jurl" name="jurl" type="url">
+            <input class="jurl" name="jurl" type="url" value="${application.url || ""}">
           </label>
         </div>
         <div class="application-create-form-field">
@@ -89,7 +99,7 @@ function renderApplicationForm(statuses_list) {
             <select class="astatus" name="status">
                 ${statuses_list
                   .map((status) => {
-                    return `<option value="${status["id"]}">${status["name"]}</option>`;
+                    return `<option value="${status["id"]}" ${status.id === application?.status?.id ? "selected" : ""}>${status["name"]}</option>`;
                   })
                   .join("")}
             </select>
@@ -97,10 +107,10 @@ function renderApplicationForm(statuses_list) {
         </div>
         <div class="application-create-form-field">
           <label>Next Appointment:
-            <input class="jappointment" name="jappointment" type="date">
+            <input class="jappointment" name="jappointment" type="date" value="${date}">
           </label>
         </div>
-        <input class="application-form-submit" type="submit" value="Create Application">
+        <input class="application-form-submit" type="submit" value="Submit">
         <button class="application-form-close" type="button">Close</button>
     </form>
     `;

@@ -31,4 +31,4 @@ class BaseApplicationOptional(BaseModel):
 
 
 class UpdateApplication(BaseApplicationOptional):
-    status_id: Annotated[str | None, AfterValidator(must_be_positive)]
+    status_id: Annotated[int | None, AfterValidator(must_be_positive)]

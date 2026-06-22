@@ -4,6 +4,7 @@ import {
   getApplicationStatuses,
   postApplication,
   deleteApplication,
+  updateApplication,
 } from "./api.js";
 import { renderApplicationKanban } from "./ui/applicationsKanaban.js";
 import { createApplicationForm } from "./ui/createApplicationForm.js";
@@ -25,10 +26,15 @@ async function deleteApplicationCallback(application_id) {
   refreshKanban(_phases, _statuses);
 }
 
-// async function getApplicationStatusesCallback() {
-//   const response = await getApplicationStatuses();
-//   return response;
-// }
+async function updateFormCallback(updatedApplication, id) {
+  console.log(updatedApplication, id);
+  try {
+    const response = await updateApplication(updatedApplication, id);
+    refreshKanban(_phases, _statuses);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function refreshKanban(phases, statuses) {
   const applications = await getApplications();
@@ -39,6 +45,7 @@ async function refreshKanban(phases, statuses) {
     statuses,
     createFormCallback,
     deleteApplicationCallback,
+    updateFormCallback,
   );
 }
 

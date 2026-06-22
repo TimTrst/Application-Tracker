@@ -122,7 +122,8 @@ def modify_application(id: int, updated_application: UpdateApplication, conn: sq
     cursor.execute(sql,
                    (merged_application["company_name"],
                     merged_application["job_title"],
-                    merged_application["url"],
+                    str(merged_application["url"]
+                        ) if merged_application["url"] else None,
                     merged_application["status_id"],
                     merged_application["date_appointment"], id)
                    )
