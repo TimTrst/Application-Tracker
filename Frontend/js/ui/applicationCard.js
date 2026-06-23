@@ -1,4 +1,10 @@
+import { formatDateString } from "../helper.js";
+
 export function fillApplicationCardHTML(application) {
+  let date = "";
+
+  date = formatDateString(application?.date_appointment);
+
   const row_html_string = `
         <div class="kanban-card">
             <div class="application-card" data-app-id="${application.id}">
@@ -7,8 +13,8 @@ export function fillApplicationCardHTML(application) {
                     <p class="application-header-text">${application.job_title}</p>
                 </header>
                 <div class="application-card-body">
-                    <p class="application-card-date">${application.date_appointment}</p>
-                    <p class="application-card-url">${application.url}</p>
+                    <p class="application-card-date">${date}</p>
+                    <p class="application-card-url">${application.url ?? ""}</p>
                 </div>
                 <div class="application-card-status-flag">
                     ${application.status.name}

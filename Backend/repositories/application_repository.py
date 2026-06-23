@@ -20,6 +20,8 @@ BASE_APPLICATION_QUERY = '''
                     LEFT JOIN phase ON status.phase_id = phase.id
                 '''
 
+ORDER_APPLICATIONS_BY_DATE_NULL_LAST = '''ORDER BY application.date_appointment NULLS LAST'''
+
 
 def _map_row_to_application(row) -> ReadApplication:
     application = {
@@ -44,7 +46,8 @@ def _map_row_to_application(row) -> ReadApplication:
 
 def get_all_applications(conn: sqlite3.Connection):
     cursor = conn.cursor()
-    cursor.execute(BASE_APPLICATION_QUERY)
+    cursor.execute(BASE_APPLICATION_QUERY +
+                   ORDER_APPLICATIONS_BY_DATE_NULL_LAST)
 
     rows = cursor.fetchall()
 
@@ -131,5 +134,4 @@ def modify_application(id: int, updated_application: UpdateApplication, conn: sq
     conn.commit()
 
     result = get_application_by_id(id, conn)
-    print(f"Result after update: {result}")
     return result

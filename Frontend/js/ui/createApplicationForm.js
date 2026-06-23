@@ -1,3 +1,5 @@
+import { formatDateString } from "../helper.js";
+
 export function createApplicationForm(
   container_to_insert_html,
   statuses_list,
@@ -69,8 +71,7 @@ function renderApplicationForm(statuses_list, application) {
   let date = "";
 
   if (Object.keys(application).length !== 0) {
-    date = new Date(application.date_appointment);
-    date = date.toISOString().slice(0, 10);
+    date = formatDateString(application.application_appointment);
   }
 
   return `

@@ -48,7 +48,6 @@ def delete_application(id: Annotated[int, Path(gt=0)], conn=Depends(get_db)):
 
 @router.patch("/{id}", response_model=ReadApplication)
 def update_application(id: Annotated[int, Path(gt=0)], updated_application: UpdateApplication, conn=Depends(get_db)):
-    print(id, updated_application)
     try:
         updated_application = modify_application(id, updated_application, conn)
         if not updated_application:
