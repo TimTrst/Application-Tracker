@@ -2,7 +2,7 @@ import { formatDateString } from "../helper.js";
 
 export function createApplicationForm(
   container_to_insert_html,
-  statuses_list,
+  statuses_for_phase,
   element_to_restore,
   submitCallback,
   application_object = {},
@@ -11,7 +11,7 @@ export function createApplicationForm(
   const create_application_form = document.createElement("div");
 
   create_application_form.innerHTML = renderApplicationForm(
-    statuses_list,
+    statuses_for_phase,
     application_object,
   );
 
@@ -67,7 +67,7 @@ export function createApplicationForm(
 }
 
 // render the form
-function renderApplicationForm(statuses_list, application) {
+function renderApplicationForm(statuses_for_phase, application) {
   let date = "";
 
   if (Object.keys(application).length !== 0) {
@@ -98,7 +98,7 @@ function renderApplicationForm(statuses_list, application) {
           <label>
           Status:
             <select class="astatus" name="status">
-                ${statuses_list
+                ${statuses_for_phase
                   .map((status) => {
                     return `<option value="${status["id"]}" ${status.id === application?.status?.id ? "selected" : ""}>${status["name"]}</option>`;
                   })

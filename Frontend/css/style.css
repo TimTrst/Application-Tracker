@@ -1,3 +1,8 @@
+:root {
+  --kanban-card-padding: 15px;
+  --kanban-columns-gap: 10px;
+}
+
 .app-body {
   display: grid;
 }
@@ -18,30 +23,11 @@
   background-color: rgb(0, 0, 0);
   flex-direction: row;
   justify-content: space-evenly;
-  gap: 10px;
+  gap: var(--kanban-columns-gap);
   overflow: hidden;
   padding: 5%;
   margin: auto;
   max-width: 80em;
-}
-
-.kanban-column-header {
-  background-color: rgb(165, 169, 48);
-  border: 2px solid #393939;
-  color: white;
-  text-align: center;
-  font-size: large;
-  font-weight: bold;
-}
-
-.kanban-card {
-  display: flex;
-  border: 2px solid #393939;
-  box-sizing: border-box;
-  padding: 15px;
-  background-color: rgb(255, 255, 255);
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .kanban-column-flex-container {
@@ -51,6 +37,30 @@
   min-width: 250px;
   max-width: 500px;
   flex: 1 1 250px;
+}
+
+.kanban-column-header {
+  background-color: rgb(165, 169, 48);
+  border: 2px solid #393939;
+  color: white;
+  text-align: center;
+  font-size: larger;
+  font-weight: bold;
+}
+
+.kanban-card {
+  display: flex;
+  border: 2px solid #393939;
+  box-sizing: border-box;
+  /* padding: 15px; */
+  background-color: rgb(255, 255, 255);
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.application-card {
+  padding: var(--kanban-card-padding);
+  cursor: pointer;
 }
 
 .application-card-header {
@@ -67,7 +77,7 @@
   justify-content: space-evenly;
 }
 
-.delete-application-dialog-background {
+.dialog-background {
   position: fixed;
   top: 0;
   left: 0;
@@ -76,7 +86,7 @@
   background-color: rgba(76, 150, 215, 0.735);
 }
 
-.delete-application-dialog {
+.dialog {
   border: 2px solid #393939;
   padding: 20px;
   height: 100px;
@@ -95,6 +105,7 @@
 .create-application-form {
   display: flex;
   flex-direction: column;
+  padding: var(--kanban-card-padding);
   gap: 10px;
 }
 

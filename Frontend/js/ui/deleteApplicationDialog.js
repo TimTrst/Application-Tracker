@@ -4,7 +4,7 @@ export function deleteApplicationDialog(
 ) {
   const confirmDialogBackground = document.createElement("div");
 
-  confirmDialogBackground.className = "delete-application-dialog-background";
+  confirmDialogBackground.className = "dialog-background";
 
   document.body.appendChild(confirmDialogBackground);
 
@@ -33,7 +33,7 @@ export function deleteApplicationDialog(
 function confirmDialogHtml() {
   const dialog = document.createElement("div");
 
-  dialog.className = "delete-application-dialog";
+  dialog.className = "dialog";
 
   dialog.innerHTML = `
     <p>Do you want to delete this Application?</p>

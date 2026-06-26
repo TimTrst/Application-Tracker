@@ -1,5 +1,6 @@
 import { fillApplicationCardHTML } from "./applicationCard.js";
 import { deleteApplicationDialog } from "./deleteApplicationDialog.js";
+import { selectStatusForPhase } from "./selectStatusForPhase.js";
 import { createApplicationForm } from "./createApplicationForm.js";
 
 function createHTMLPhaseColumn(phase) {
@@ -68,6 +69,12 @@ export function renderApplicationKanban(
     });
   }
 
+  function getApplicationById(app_id) {
+    return applications.find((application) => {
+      return application["id"].toString() === app_id;
+    });
+  }
+
   document
     .querySelectorAll(".application-card-button-delete")
     .forEach((btn) => {
@@ -124,4 +131,41 @@ export function renderApplicationKanban(
       );
     }),
   );
+
+  document.querySelectorAll(".application-card").forEach((card) =>
+    card.addEventListener("dragstart", async (e) => {
+      const application_card = e.currentTarget;
+      const application_id = application_card.dataset.appId;
+      e.dataTransfer.setData("text/plain", application_id);
+    }),
+  );
+
+  document
+    .querySelectorAll(".kanban-column-flex-container")
+    .forEach((column) => {
+      column.addEventListener("dragover", (e) => e.preventDefault());
+
+      column.addEventListener("drop", async (e) => {
+        e.preventDefault();
+
+        const phase_column = e.currentTarget;
+        const new_phase_id = phase_column.dataset.phaseId;
+        const statuses_for_phase = getStatusesByPhaseId(new_phase_id);
+        const application_id = e.dataTransfer.getData("text/plain");
+        const application = getApplicationById(application_id);
+        console.log(application);
+        const previous_phase_id = application.status.phase.id;
+        console.log(previous_phase_id, new_phase_id);
+
+        if (previous_phase_id != new_phase_id) {
+          selectStatusForPhase(
+            application,
+            statuses_for_phase,
+            updateApplicationCallback,
+          );
+        } else {
+          console.log("Cannot place application into the same phase as before");
+        }
+      });
+    });
 }

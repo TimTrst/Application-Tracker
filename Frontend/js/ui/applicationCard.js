@@ -7,7 +7,7 @@ export function fillApplicationCardHTML(application) {
 
   const row_html_string = `
         <div class="kanban-card">
-            <div class="application-card" data-app-id="${application.id}">
+            <div class="application-card" draggable="true" data-app-id="${application.id}">
                 <header class="application-card-header">
                     <p class="application-header-text">${application.company_name}</p>
                     <p class="application-header-text">${application.job_title}</p>
