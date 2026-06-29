@@ -1,4 +1,4 @@
-import { formatDateString } from "../helper.js";
+import { formatDateString, buildApplicationObject } from "../helper.js";
 
 export function createApplicationForm(
   container_to_insert_html,
@@ -42,27 +42,19 @@ export function createApplicationForm(
 
       const company_name = container.querySelector(".cname").value;
       const job_title = container.querySelector(".jname").value;
-      const job_url = container.querySelector(".jurl").value;
+      const url = container.querySelector(".jurl").value;
       const status_id = container.querySelector(".astatus").value;
-      const application_appointment =
-        container.querySelector(".jappointment").value;
+      const date_appointment = container.querySelector(".jappointment").value;
 
-      let new_application = {
-        company_name: "",
-        job_title: "",
-        url: null,
-        status_id: 1,
-        date_appointment: "",
-      };
+      const newApplication = buildApplicationObject({
+        company_name,
+        job_title,
+        url,
+        status_id,
+        date_appointment,
+      });
 
-      new_application.company_name = company_name;
-      new_application.job_title = job_title;
-      new_application.url = job_url ? job_url : null;
-      new_application.status_id = status_id;
-      new_application.date_appointment =
-        application_appointment !== "" ? application_appointment : null;
-
-      await submitCallback(new_application, application_object.id);
+      await submitCallback(newApplication, application_object.id);
     });
 }
 

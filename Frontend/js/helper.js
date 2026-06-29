@@ -6,3 +6,23 @@ export function formatDateString(date) {
     return "";
   }
 }
+
+export function buildApplicationObject({
+  company_name = "",
+  job_title = "",
+  url = null,
+  status_id = 1,
+  date_appointment = null,
+} = {}) {
+  console.log(...arguments);
+  if (url === "") {
+    url = null;
+  }
+  if (date_appointment === "") {
+    date_appointment = null;
+  }
+
+  status_id = parseInt(status_id);
+
+  return { company_name, job_title, url, status_id, date_appointment };
+}

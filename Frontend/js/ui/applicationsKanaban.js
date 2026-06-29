@@ -153,9 +153,7 @@ export function renderApplicationKanban(
         const statuses_for_phase = getStatusesByPhaseId(new_phase_id);
         const application_id = e.dataTransfer.getData("text/plain");
         const application = getApplicationById(application_id);
-        console.log(application);
         const previous_phase_id = application.status.phase.id;
-        console.log(previous_phase_id, new_phase_id);
 
         if (previous_phase_id != new_phase_id) {
           selectStatusForPhase(

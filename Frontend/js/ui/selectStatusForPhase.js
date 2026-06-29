@@ -1,49 +1,44 @@
+import { buildApplicationObject } from "../helper.js";
+
 export function selectStatusForPhase(
-  application,
+  application_object,
   statuses_for_phase,
   updateApplicationCallback,
 ) {
-  const selectStatusContainer = document.createElement("div");
+  const selectStatusForPhaseContainer = document.createElement("div");
 
-  selectStatusContainer.className = "dialog-background";
+  selectStatusForPhaseContainer.className = "dialog-background";
 
-  document.body.appendChild(selectStatusContainer);
+  document.body.appendChild(selectStatusForPhaseContainer);
 
   const confirmDialog = confirmDialogHtml(statuses_for_phase);
 
-  selectStatusContainer.appendChild(confirmDialog);
+  selectStatusForPhaseContainer.appendChild(confirmDialog);
 
-  const confirm_button = document.querySelector(
+  const confirm_button = selectStatusForPhaseContainer.querySelector(
     ".confirm-select-status-button",
   );
-  const cancel_button = document.querySelector(".cancel-select-status-button");
+  const cancel_button = selectStatusForPhaseContainer.querySelector(
+    ".cancel-select-status-button",
+  );
 
   confirm_button.addEventListener("click", async (e) => {
-    const selectElement = selectStatusContainer.querySelector(".astatus");
+    const selectElement =
+      selectStatusForPhaseContainer.querySelector(".astatus");
     const selectedStatus = selectElement.value;
 
-    let new_application = {
-      company_name: "",
-      job_title: "",
-      url: null,
-      status_id: 1,
-      date_appointment: "",
-    };
+    const newApplication = buildApplicationObject({
+      ...application_object,
+      status_id: selectedStatus,
+    });
 
-    new_application.company_name = application.company_name;
-    new_application.job_title = application.job_title;
-    new_application.url = application.url;
-    new_application.status_id = parseInt(selectedStatus);
-    new_application.date_appointment =
-      application.date_appointment !== "" ? application.date_appointment : null;
+    updateApplicationCallback(newApplication, application_object.id);
 
-    updateApplicationCallback(new_application, application.id);
-
-    document.body.removeChild(selectStatusContainer);
+    document.body.removeChild(selectStatusForPhaseContainer);
   });
 
   cancel_button.addEventListener("click", (e) => {
-    document.body.removeChild(selectStatusContainer);
+    document.body.removeChild(selectStatusForPhaseContainer);
   });
 }
 
@@ -53,11 +48,11 @@ function confirmDialogHtml(statuses_for_phase) {
   dialog.className = "dialog";
 
   dialog.innerHTML = `
-    <p>Select a statuse for the new application phase</p>
+    <p>Select a statuse for the new application_object phase</p>
     <select class="astatus" name="status">
         ${statuses_for_phase
           .map((status) => {
-            return `<option value="${status["id"]}"}>${status["name"]}</option>`;
+            return `<option value="${status["id"]}">${status["name"]}</option>`;
           })
           .join("")}
     </select>

@@ -2,31 +2,31 @@ export function deleteApplicationDialog(
   application_id,
   deleteApplicationCallback,
 ) {
-  const confirmDialogBackground = document.createElement("div");
+  const deleteApplicationContainer = document.createElement("div");
 
-  confirmDialogBackground.className = "dialog-background";
+  deleteApplicationContainer.className = "dialog-background";
 
-  document.body.appendChild(confirmDialogBackground);
+  document.body.appendChild(deleteApplicationContainer);
 
   const confirmDialog = confirmDialogHtml();
 
-  confirmDialogBackground.appendChild(confirmDialog);
+  deleteApplicationContainer.appendChild(confirmDialog);
 
-  const confirm_button = document.querySelector(
+  const confirm_button = deleteApplicationContainer.querySelector(
     ".confirm-delete-application-button",
   );
-  const cancel_button = document.querySelector(
+  const cancel_button = deleteApplicationContainer.querySelector(
     ".cancel-delete-application-button",
   );
 
   confirm_button.addEventListener("click", async (e) => {
     deleteApplicationCallback(application_id);
 
-    document.body.removeChild(confirmDialogBackground);
+    document.body.removeChild(deleteApplicationContainer);
   });
 
   cancel_button.addEventListener("click", (e) => {
-    document.body.removeChild(confirmDialogBackground);
+    document.body.removeChild(deleteApplicationContainer);
   });
 }
 

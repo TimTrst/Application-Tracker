@@ -27,7 +27,6 @@ async function deleteApplicationCallback(application_id) {
 }
 
 async function updateFormCallback(updatedApplication, id) {
-  console.log(updatedApplication, id);
   try {
     const response = await updateApplication(updatedApplication, id);
     refreshKanban(_phases, _statuses);

@@ -16,7 +16,6 @@ export async function getApplicationStatuses() {
 }
 
 export async function postApplication(application, timeoutMs = 8000) {
-  console.log(application);
   try {
     const response = await fetch(`${CONFIG.API_BASE_URL}/api/applications/`, {
       method: "POST",
@@ -77,14 +76,12 @@ export async function deleteApplication(id) {
 }
 
 export async function updateApplication(updatedApplication, id) {
-  console.log(id);
   const response = await fetch(
     `${CONFIG.API_BASE_URL}/api/applications/${id}`,
     {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        // Guardrail 2: Explicitly ask for JSON back to prevent HTML error pages
         Accept: "application/json",
       },
       body: JSON.stringify(updatedApplication),
