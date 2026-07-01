@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException, Path, Response, status
 from typing import Annotated
 from models.application import ReadApplication, WriteApplication, UpdateApplication
 from database.database import get_db
@@ -34,12 +34,13 @@ def write_application(application: WriteApplication, conn=Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", status_code=204)
 def delete_application(id: Annotated[int, Path(gt=0)], conn=Depends(get_db)):
     try:
         if not remove_application(id, conn):
             raise HTTPException(
                 status_code=404, detail="Application not found")
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     except HTTPException:
         raise
     except Exception as e:

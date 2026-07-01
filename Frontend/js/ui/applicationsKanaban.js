@@ -35,10 +35,7 @@ export function renderApplicationKanban(
   deleteApplicationCallback,
   updateApplicationCallback,
 ) {
-  console.log(applications);
-
   const container = document.getElementById("applications-list");
-
   const phases_with_applications = new Map();
 
   phases.forEach((phase) => {

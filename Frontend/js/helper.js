@@ -14,7 +14,6 @@ export function buildApplicationObject({
   status_id = 1,
   date_appointment = null,
 } = {}) {
-  console.log(...arguments);
   if (url === "") {
     url = null;
   }

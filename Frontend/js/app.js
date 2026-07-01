@@ -23,6 +23,7 @@ async function createFormCallback(new_application) {
 
 async function deleteApplicationCallback(application_id) {
   const response = await deleteApplication(application_id);
+  console.log(response);
   refreshKanban(_phases, _statuses);
 }
 
