@@ -114,3 +114,21 @@
   flex-direction: column;
   gap: 8px;
 }
+
+.response-notifications-container {
+  display: flex;
+  flex-direction: column-reverse;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 99;
+  margin: 50px;
+  min-height: 80px;
+  min-width: auto;
+}
+
+.response-notification-card {
+  border: 2px solid #393939;
+  margin-top: 10px;
+  padding: 10px;
+}
