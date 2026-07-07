@@ -37,6 +37,8 @@ export function renderApplicationKanban(
 ) {
   const container = document.getElementById("applications-list");
   const phasesWithApplications = new Map();
+  let draggedApplicationElement;
+  let sourceColumnOfDraggedElement;
 
   phases.forEach((phase) => {
     phasesWithApplications.set(phase["name"], {
@@ -145,6 +147,8 @@ export function renderApplicationKanban(
   document.querySelectorAll(".application-card").forEach((card) =>
     card.addEventListener("dragstart", async (e) => {
       const applicationCard = e.currentTarget;
+      draggedApplicationElement = applicationCard.parentNode; // grab whole kanban-card which holds an application card
+      sourceColumnOfDraggedElement = draggedApplicationElement.parentNode;
       const applicationId = applicationCard.dataset.appId;
       e.dataTransfer.setData("text/plain", applicationId);
     }),
@@ -156,7 +160,14 @@ export function renderApplicationKanban(
   document
     .querySelectorAll(".kanban-column-flex-container")
     .forEach((column) => {
-      column.addEventListener("dragover", (e) => e.preventDefault());
+      column.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        const buttonCard = column.querySelector(
+          ".application-button-create",
+        ).parentNode;
+
+        column.insertBefore(draggedApplicationElement, buttonCard);
+      });
 
       column.addEventListener("drop", async (e) => {
         e.preventDefault();
@@ -173,6 +184,8 @@ export function renderApplicationKanban(
             application,
             statusesForPhase,
             updateApplicationCallback,
+            draggedApplicationElement,
+            sourceColumnOfDraggedElement,
           );
         } else {
           console.log("Cannot place application into the same phase as before");

@@ -4,6 +4,8 @@ export function selectStatusForPhase(
   application_object,
   statuses_for_phase,
   updateApplicationCallback,
+  draggedApplicationElement,
+  sourceColumnOfDraggedElement,
 ) {
   const selectStatusForPhaseContainer = document.createElement("div");
 
@@ -15,14 +17,14 @@ export function selectStatusForPhase(
 
   selectStatusForPhaseContainer.appendChild(confirmDialog);
 
-  const confirm_button = selectStatusForPhaseContainer.querySelector(
+  const confirmButton = selectStatusForPhaseContainer.querySelector(
     ".confirm-select-status-button",
   );
-  const cancel_button = selectStatusForPhaseContainer.querySelector(
+  const cancelButton = selectStatusForPhaseContainer.querySelector(
     ".cancel-select-status-button",
   );
 
-  confirm_button.addEventListener("click", async (e) => {
+  confirmButton.addEventListener("click", async (e) => {
     const selectElement =
       selectStatusForPhaseContainer.querySelector(".astatus");
     const selectedStatus = selectElement.value;
@@ -37,18 +39,28 @@ export function selectStatusForPhase(
     document.body.removeChild(selectStatusForPhaseContainer);
   });
 
-  cancel_button.addEventListener("click", (e) => {
+  cancelButton.addEventListener("click", (e) => {
     document.body.removeChild(selectStatusForPhaseContainer);
+
+    const buttonCard = sourceColumnOfDraggedElement.querySelector(
+      ".application-button-create",
+    ).parentNode;
+
+    const column = buttonCard.parentNode;
+
+    column.insertBefore(draggedApplicationElement, buttonCard);
   });
 }
 
 function confirmDialogHtml(statuses_for_phase) {
   const dialog = document.createElement("div");
 
+  console.log(statuses_for_phase);
+
   dialog.className = "dialog";
 
   dialog.innerHTML = `
-    <p>Select a statuse for the new application_object phase</p>
+    <p>Select a status for the new phase: ${statuses_for_phase[0].phase.name}</p>
     <select class="astatus" name="status">
         ${statuses_for_phase
           .map((status) => {
@@ -56,8 +68,10 @@ function confirmDialogHtml(statuses_for_phase) {
           })
           .join("")}
     </select>
-    <button class="confirm-select-status-button">Submit</button>
-    <button class="cancel-select-status-button">Cancel</button>
+    <div class="dialog-footer">      
+      <button class="confirm-select-status-button">Submit</button>
+      <button class="cancel-select-status-button">Cancel</button>
+    </div>
   `;
 
   return dialog;

@@ -1,6 +1,4 @@
 export function responseNotification(responseObject) {
-  console.log(responseObject);
-
   let notificationContainer = document.querySelector(
     ".response-notifications-container",
   );
@@ -15,7 +13,7 @@ export function responseNotification(responseObject) {
 
   setTimeout(() => {
     notificationCard.remove();
-  }, 3000);
+  }, 4000);
 }
 
 function notificationCardHtml(response) {

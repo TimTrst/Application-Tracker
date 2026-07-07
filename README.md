@@ -2,6 +2,8 @@
 
 A full-stack web app for tracking job applications on a Kanban-style board, built as a **learning project** to practice backend and frontend development close to industry best practices.
 
+![alt text](kanban_screenshot.png)
+
 > 🚧 **Work in progress.** The backend is complete and tested. The frontend (Kanban board) is actively being built out. See [Roadmap](#roadmap) below for what's next.
 
 ---
@@ -80,6 +82,7 @@ frontend/
 - A shared form component serves both the "create" and "edit" flows, driven by mode-aware callbacks
 - Reference data (phases & statuses) is fetched once and cached, instead of being re-fetched on every render
 - Applications are sorted by application date at the database layer (nulls last)
+- Drag-and-drop status updates: cards can be dragged between (and within) columns using the native HTML5 Drag and Drop API — no external library. Dropping into a new phase prompts for the target status, then persists the change. Cards also visually reorder in real time as they're dragged, rather than only snapping into place on drop.
 
 ---
 
@@ -124,9 +127,7 @@ API docs (Swagger UI) are available at `/docs` once the server is running.
 
 **Up next:**
 
-- [ ] Drag-and-drop between Kanban columns to update an application's status
 - [ ] Status badge color-coding by phase
-- [ ] Per-column "add card" buttons
 
 **Deferred for later:**
 
