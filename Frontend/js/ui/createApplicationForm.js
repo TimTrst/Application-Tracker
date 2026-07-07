@@ -1,38 +1,38 @@
 import { formatDateString, buildApplicationObject } from "../helper.js";
 
 export function createApplicationForm(
-  container_to_insert_html,
-  statuses_for_phase,
-  element_to_restore,
+  containerToInsertHtml,
+  statusesForPhase,
+  elementToRestore,
   submitCallback,
-  application_object = {},
+  applicationObject = {},
 ) {
   // div to render the form into
-  const create_application_form = document.createElement("div");
+  const applicationFormElement = document.createElement("div");
 
-  create_application_form.innerHTML = renderApplicationForm(
-    statuses_for_phase,
-    application_object,
+  applicationFormElement.innerHTML = renderApplicationForm(
+    statusesForPhase,
+    applicationObject,
   );
 
-  container_to_insert_html.appendChild(create_application_form);
+  containerToInsertHtml.appendChild(applicationFormElement);
 
   // listen to any close event on application forms
   // remove the form
   // turn form create button visible again
-  create_application_form
+  applicationFormElement
     .querySelectorAll(".application-form-close")
     .forEach((btn) =>
       btn.addEventListener("click", (e) => {
         const formContainer = e.currentTarget.closest(".kanban-card");
 
-        create_application_form.remove();
-        element_to_restore.classList.remove("hidden");
+        applicationFormElement.remove();
+        elementToRestore.classList.remove("hidden");
       }),
     );
 
   // listen to the form submit
-  create_application_form
+  applicationFormElement
     .querySelector("form")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -40,26 +40,26 @@ export function createApplicationForm(
       // currentTarget refers to the element that the listener was attached to (the form in this case)
       const container = e.currentTarget.closest("form");
 
-      const company_name = container.querySelector(".cname").value;
-      const job_title = container.querySelector(".jname").value;
+      const companyName = container.querySelector(".cname").value;
+      const jobTitle = container.querySelector(".jname").value;
       const url = container.querySelector(".jurl").value;
-      const status_id = container.querySelector(".astatus").value;
-      const date_appointment = container.querySelector(".jappointment").value;
+      const statusId = container.querySelector(".astatus").value;
+      const dateAppointment = container.querySelector(".jappointment").value;
 
       const newApplication = buildApplicationObject({
-        company_name,
-        job_title,
+        company_name: companyName,
+        job_title: jobTitle,
         url,
-        status_id,
-        date_appointment,
+        status_id: statusId,
+        date_appointment: dateAppointment,
       });
 
-      await submitCallback(newApplication, application_object.id);
+      await submitCallback(newApplication, applicationObject.id);
     });
 }
 
 // render the form
-function renderApplicationForm(statuses_for_phase, application) {
+function renderApplicationForm(statusesForPhase, application) {
   let date = "";
 
   if (Object.keys(application).length !== 0) {
@@ -90,7 +90,7 @@ function renderApplicationForm(statuses_for_phase, application) {
           <label>
           Status:
             <select class="astatus" name="status">
-                ${statuses_for_phase
+                ${statusesForPhase
                   .map((status) => {
                     return `<option value="${status["id"]}" ${status.id === application?.status?.id ? "selected" : ""}>${status["name"]}</option>`;
                   })

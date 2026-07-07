@@ -4,27 +4,27 @@ import { selectStatusForPhase } from "./selectStatusForPhase.js";
 import { createApplicationForm } from "./createApplicationForm.js";
 
 function createHTMLPhaseColumn(phase) {
-  let phase_column_html = `<div class="kanban-column-flex-container" data-phase-id="${phase["id"]}">`;
+  let phaseColumnHtml = `<div class="kanban-column-flex-container" data-phase-id="${phase["id"]}">`;
 
-  let phase_header = `<div class="kanban-column-header">`;
+  let phaseHeader = `<div class="kanban-column-header">`;
 
-  let phase_name = `<p>${phase["name"]}</p></div>`;
+  let phaseName = `<p>${phase["name"]}</p></div>`;
 
-  phase_column_html += phase_header + phase_name;
+  phaseColumnHtml += phaseHeader + phaseName;
 
-  let phase_column_inner = (phase["applications"] ?? [])
+  let phaseColumnInner = (phase["applications"] ?? [])
     .map((application) => fillApplicationCardHTML(application))
     .join("");
 
-  phase_column_html = phase_column_html + phase_column_inner;
+  phaseColumnHtml = phaseColumnHtml + phaseColumnInner;
 
-  let add_application_div = `<div class="kanban-card" data-phase-id="${phase["id"]}">
+  let addApplicationDiv = `<div class="kanban-card" data-phase-id="${phase["id"]}">
    <button class="application-button-create">Create new Application</button>
   </div>`;
 
-  phase_column_html = phase_column_html + add_application_div + `</div>`;
+  phaseColumnHtml = phaseColumnHtml + addApplicationDiv + `</div>`;
 
-  return phase_column_html;
+  return phaseColumnHtml;
 }
 
 export function renderApplicationKanban(
@@ -36,107 +36,123 @@ export function renderApplicationKanban(
   updateApplicationCallback,
 ) {
   const container = document.getElementById("applications-list");
-  const phases_with_applications = new Map();
+  const phasesWithApplications = new Map();
 
   phases.forEach((phase) => {
-    phases_with_applications.set(phase["name"], {
+    phasesWithApplications.set(phase["name"], {
       ...phase,
       applications: [],
     });
   });
 
   applications.forEach((application) => {
-    let application_phase = application["status"]["phase"];
-    let application_phase_name = application_phase["name"];
+    let applicationPhase = application["status"]["phase"];
+    let applicationPhaseName = applicationPhase["name"];
 
-    phases_with_applications
-      .get(application_phase_name)
+    phasesWithApplications
+      .get(applicationPhaseName)
       .applications.push(application);
   });
 
   container.innerHTML = `
-    ${[...phases_with_applications.values()]
+    ${[...phasesWithApplications.values()]
       .map((phase) => createHTMLPhaseColumn(phase))
       .join("")}
   `;
 
-  function getStatusesByPhaseId(phase_id) {
+  function getStatusesByPhaseId(phaseId) {
     return statuses.filter((state) => {
-      return state["phase"]["id"].toString() === phase_id;
+      return state["phase"]["id"].toString() === phaseId;
     });
   }
 
-  function getApplicationById(app_id) {
+  function getApplicationById(appId) {
     return applications.find((application) => {
-      return application["id"].toString() === app_id;
+      return application["id"].toString() === appId;
     });
   }
 
+  /*
+  Eventlistener for application cards (create, update, delete)
+  ------------------------------------------------------------------------------
+  */
+  // DELETE
   document
     .querySelectorAll(".application-card-button-delete")
     .forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        const application_card = e.target.closest(".application-card");
-        const application_id = application_card.dataset.appId;
+        const applicationCard = e.target.closest(".application-card");
+        const applicationId = applicationCard.dataset.appId;
 
         if (!document.querySelector(".delete-application-dialog")) {
-          deleteApplicationDialog(application_id, deleteApplicationCallback);
+          deleteApplicationDialog(applicationId, deleteApplicationCallback);
         }
       });
     });
 
+  // UPDATE
   document
     .querySelectorAll(".application-card-button-change")
     .forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        const kanban_card = e.target.closest(".kanban-card");
-        const application_card = e.target.closest(".application-card");
-        const application_id = application_card.dataset.appId;
-        const application_object = applications.find(
-          (application) => application.id == application_id,
+        const kanbanCard = e.target.closest(".kanban-card");
+        const applicationCard = e.target.closest(".application-card");
+        const applicationId = applicationCard.dataset.appId;
+        const applicationObject = applications.find(
+          (application) => application.id == applicationId,
         );
-        const phase_column = e.target.closest(".kanban-column-flex-container");
-        const phase_id = phase_column.dataset.phaseId;
-        const statuses_for_phase = getStatusesByPhaseId(phase_id);
+        const phaseColumn = e.target.closest(".kanban-column-flex-container");
+        const phaseId = phaseColumn.dataset.phaseId;
+        const statusesForPhase = getStatusesByPhaseId(phaseId);
 
-        application_card.classList.add("hidden");
+        // hidden, not removed, so it can be restored if the edit is cancelled
+        applicationCard.classList.add("hidden");
 
         createApplicationForm(
-          kanban_card,
-          statuses_for_phase,
-          application_card,
+          kanbanCard,
+          statusesForPhase,
+          applicationCard,
           updateApplicationCallback,
-          application_object,
+          // passing an applicationObject switches the form into "update" mode;
+          // the create flow calls this with it omitted
+          applicationObject,
         );
       });
     });
 
+  // CREATE
   document.querySelectorAll(".application-button-create").forEach((btn) =>
     btn.addEventListener("click", async (e) => {
-      const application_card = e.currentTarget.parentNode;
-      const phase_id = application_card.dataset.phaseId;
-      const create_button = e.currentTarget;
-      const statuses_for_phase = getStatusesByPhaseId(phase_id);
+      const kanbanCard = e.currentTarget.parentNode;
+      const phaseId = kanbanCard.dataset.phaseId;
+      const createButton = e.currentTarget;
+      const statusesForPhase = getStatusesByPhaseId(phaseId);
 
-      create_button.classList.add("hidden");
+      createButton.classList.add("hidden");
 
       createApplicationForm(
-        application_card,
-        statuses_for_phase,
-        create_button,
-        createApplicationCallback,
+        kanbanCard,
+        statusesForPhase,
+        createButton,
+        createApplicationCallback, // create callback
+        // application object missing here: we do not need an existing object for creating a new one
       );
     }),
   );
 
+  // UPDATE: DRAGSTART EVENT
+  // dragging starts with a specific application card
   document.querySelectorAll(".application-card").forEach((card) =>
     card.addEventListener("dragstart", async (e) => {
-      const application_card = e.currentTarget;
-      const application_id = application_card.dataset.appId;
-      e.dataTransfer.setData("text/plain", application_id);
+      const applicationCard = e.currentTarget;
+      const applicationId = applicationCard.dataset.appId;
+      e.dataTransfer.setData("text/plain", applicationId);
     }),
   );
 
+  // UPDATE: DRAGOVER
+  // the card can be dropped anywhere in a kanban column
+  // todo: visualizing the drop in a column (before releasing and updating the board)
   document
     .querySelectorAll(".kanban-column-flex-container")
     .forEach((column) => {
@@ -145,17 +161,17 @@ export function renderApplicationKanban(
       column.addEventListener("drop", async (e) => {
         e.preventDefault();
 
-        const phase_column = e.currentTarget;
-        const new_phase_id = phase_column.dataset.phaseId;
-        const statuses_for_phase = getStatusesByPhaseId(new_phase_id);
-        const application_id = e.dataTransfer.getData("text/plain");
-        const application = getApplicationById(application_id);
-        const previous_phase_id = application.status.phase.id;
+        const phaseColumn = e.currentTarget;
+        const newPhaseId = phaseColumn.dataset.phaseId;
+        const statusesForPhase = getStatusesByPhaseId(newPhaseId);
+        const applicationId = e.dataTransfer.getData("text/plain");
+        const application = getApplicationById(applicationId);
+        const previousPhaseId = application.status.phase.id;
 
-        if (previous_phase_id != new_phase_id) {
+        if (previousPhaseId != newPhaseId) {
           selectStatusForPhase(
             application,
-            statuses_for_phase,
+            statusesForPhase,
             updateApplicationCallback,
           );
         } else {

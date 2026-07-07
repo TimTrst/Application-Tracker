@@ -1,5 +1,5 @@
 export function deleteApplicationDialog(
-  application_id,
+  applicationId,
   deleteApplicationCallback,
 ) {
   const deleteApplicationContainer = document.createElement("div");
@@ -12,20 +12,20 @@ export function deleteApplicationDialog(
 
   deleteApplicationContainer.appendChild(confirmDialog);
 
-  const confirm_button = deleteApplicationContainer.querySelector(
+  const confirmButton = deleteApplicationContainer.querySelector(
     ".confirm-delete-application-button",
   );
-  const cancel_button = deleteApplicationContainer.querySelector(
+  const cancelButton = deleteApplicationContainer.querySelector(
     ".cancel-delete-application-button",
   );
 
-  confirm_button.addEventListener("click", async (e) => {
-    deleteApplicationCallback(application_id);
+  confirmButton.addEventListener("click", async (e) => {
+    deleteApplicationCallback(applicationId);
 
     document.body.removeChild(deleteApplicationContainer);
   });
 
-  cancel_button.addEventListener("click", (e) => {
+  cancelButton.addEventListener("click", (e) => {
     document.body.removeChild(deleteApplicationContainer);
   });
 }

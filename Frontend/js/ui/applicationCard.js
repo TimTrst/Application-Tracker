@@ -5,7 +5,7 @@ export function fillApplicationCardHTML(application) {
 
   date = formatDateString(application?.date_appointment);
 
-  const row_html_string = `
+  const rowToHtmlString = `
         <div class="kanban-card">
             <div class="application-card" draggable="true" data-app-id="${application.id}">
                 <header class="application-card-header">
@@ -27,5 +27,5 @@ export function fillApplicationCardHTML(application) {
         </div>
         `;
 
-  return row_html_string;
+  return rowToHtmlString;
 }
