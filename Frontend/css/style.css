@@ -1,6 +1,19 @@
+.kanban-column-flex-container[data-phase-id="1"] {
+  --accent: #d85a30;
+}
+.kanban-column-flex-container[data-phase-id="2"] {
+  --accent: #ba7517;
+}
+.kanban-column-flex-container[data-phase-id="3"] {
+  --accent: #1d9e75;
+}
+.kanban-column-flex-container[data-phase-id="4"] {
+  --accent: #5f5e5a;
+}
+
 :root {
   --kanban-card-padding: 15px;
-  --kanban-columns-gap: 10px;
+  --kanban-columns-gap: 15px;
 }
 
 .app-body {
@@ -19,7 +32,8 @@
 
 #applications-list {
   display: flex;
-  border: 2px solid #ecff15;
+  border: 6px solid #4c4c4c;
+  border-radius: 2%;
   background-color: rgb(0, 0, 0);
   flex-direction: row;
   justify-content: space-evenly;
@@ -30,59 +44,78 @@
   max-width: 80em;
 }
 
+.icon-small {
+  color: gray;
+  width: 24px;
+  height: 24px;
+}
+
 .kanban-column-flex-container {
   display: flex;
   flex-direction: column;
-  background-color: rgb(47, 47, 47);
+  /* background-color: rgb(47, 47, 47); */
   min-width: 250px;
   max-width: 500px;
   flex: 1 1 250px;
 }
 
 .kanban-column-header {
-  background-color: rgb(183, 75, 91);
-  border: 2px solid #393939;
+  display: flex;
+  justify-content: space-between;
   color: white;
-  text-align: center;
   font-size: larger;
   font-weight: bold;
+  border-bottom: 1.5px solid white;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
 }
 
 .kanban-card {
   display: flex;
-  border: 2px solid #393939;
   box-sizing: border-box;
-  /* padding: 15px; */
-  background-color: rgb(255, 255, 255);
   flex-direction: column;
   justify-content: space-between;
 }
 
+.kanban-card + .kanban-card {
+  border-top: 0.5px dashed gray;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
 .application-card {
+  border-left: 4px solid var(--accent);
   padding: var(--kanban-card-padding);
-  cursor: pointer;
+  cursor: move;
 }
 
-.application-card-header {
-  background-color: bisque;
-  border: 2px solid #393939;
-  padding: 5px;
-}
-
-.application-card-footer {
-  display: flex;
-  flex-direction: row;
-  margin-top: 10px;
-  padding: 5%;
-  background-color: rgb(111, 198, 242);
-  justify-content: space-evenly;
-}
-
-.application-card-footer button {
-  background-color: gray;
+.application-card-company-name {
   color: white;
-  border: 4px solid gray;
-  font-size: 15px;
+  font-size: 30px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.application-card-job-title {
+  color: white;
+  font-size: 20px;
+}
+
+.application-card-body {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 5px;
+  color: gray;
+}
+
+.application-card-body button {
+  background: transparent;
+  border: none;
+  padding: 0%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
 }
 
 .dialog-background {
@@ -118,6 +151,19 @@
 
 .application-button-create {
   min-height: 50px;
+  margin: 30px;
+  background: transparent;
+  border: 2px dashed gray;
+  border-radius: 3%;
+  color: gray;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: larger;
+}
+.application-button-create:hover {
+  background-color: rgba(128, 128, 128, 0.26);
 }
 
 .create-application-form {

@@ -2,15 +2,17 @@ import { fillApplicationCardHTML } from "./applicationCard.js";
 import { deleteApplicationDialog } from "./deleteApplicationDialog.js";
 import { selectStatusForPhase } from "./selectStatusForPhase.js";
 import { createApplicationForm } from "./createApplicationForm.js";
+import { loadIcon, loadIconString } from "../helper.js";
 
 function createHTMLPhaseColumn(phase) {
   let phaseColumnHtml = `<div class="kanban-column-flex-container" data-phase-id="${phase["id"]}">`;
 
   let phaseHeader = `<div class="kanban-column-header">`;
 
-  let phaseName = `<p>${phase["name"]}</p></div>`;
+  let phaseName = `<span>${phase["name"]}</span>`;
+  let numberOfApplications = `<div>${phase.applications.length}</div>`;
 
-  phaseColumnHtml += phaseHeader + phaseName;
+  phaseColumnHtml += phaseHeader + phaseName + numberOfApplications + "</div>";
 
   let phaseColumnInner = (phase["applications"] ?? [])
     .map((application) => fillApplicationCardHTML(application))
@@ -18,9 +20,10 @@ function createHTMLPhaseColumn(phase) {
 
   phaseColumnHtml = phaseColumnHtml + phaseColumnInner;
 
+  const addIcon = loadIconString("icon-add", "icon-small");
   let addApplicationDiv = `<div class="kanban-card" data-phase-id="${phase["id"]}">
-   <button class="application-button-create">Create new Application</button>
-  </div>`;
+      <button class="application-button-create">${addIcon} <span>new application</span></button>
+    </div>`;
 
   phaseColumnHtml = phaseColumnHtml + addApplicationDiv + `</div>`;
 

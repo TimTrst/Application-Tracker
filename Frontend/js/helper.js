@@ -25,3 +25,21 @@ export function buildApplicationObject({
 
   return { company_name, job_title, url, status_id, date_appointment };
 }
+
+export function loadIcon(iconName, className = "") {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  if (className) svg.setAttribute("class", className);
+
+  svg.innerHTML = `<use href="assets/icons/icons.svg#${iconName}"></use>`;
+
+  return svg;
+}
+
+export function loadIconString(iconName, className = "") {
+  // Gibt puren HTML-Text zurück
+  return `
+    <svg class="${className}" xmlns="http://www.w3.org/2000/svg">
+      <use href="assets/icons/icons.svg#${iconName}"></use>
+    </svg>
+  `.trim();
+}
