@@ -1,3 +1,33 @@
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../assets/fonts/inter-v20-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../assets/fonts/source-serif-4-v14-latin-regular.woff2")
+    format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../assets/fonts/ibm-plex-mono-v20-latin-regular.woff2")
+    format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+:root {
+  --kanban-card-padding: 15px;
+  --kanban-columns-gap: 15px;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-voice: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
 .kanban-column-flex-container[data-phase-id="1"] {
   --accent: #d85a30;
 }
@@ -9,11 +39,6 @@
 }
 .kanban-column-flex-container[data-phase-id="4"] {
   --accent: #5f5e5a;
-}
-
-:root {
-  --kanban-card-padding: 15px;
-  --kanban-columns-gap: 15px;
 }
 
 .app-body {
@@ -41,7 +66,7 @@
   overflow: hidden;
   padding: 5%;
   margin: auto;
-  max-width: 80em;
+  max-width: 100em;
 }
 
 .icon-small {
@@ -53,21 +78,30 @@
 .kanban-column-flex-container {
   display: flex;
   flex-direction: column;
-  /* background-color: rgb(47, 47, 47); */
   min-width: 250px;
-  max-width: 500px;
+  max-width: 700px;
   flex: 1 1 250px;
 }
 
 .kanban-column-header {
   display: flex;
   justify-content: space-between;
-  color: white;
-  font-size: larger;
-  font-weight: bold;
   border-bottom: 1.5px solid white;
   padding-bottom: 6px;
   margin-bottom: 14px;
+}
+
+.kanban-column-header-phase-name {
+  font-family: var(--font-sans);
+  color: white;
+  font-size: larger;
+  font-weight: 500;
+}
+
+.kanban-column-header-application-count {
+  font-family: var(--font-mono);
+  color: gray;
+  font-size: large;
 }
 
 .kanban-card {
@@ -77,6 +111,7 @@
   justify-content: space-between;
 }
 
+/* apply styling if two follow each other */
 .kanban-card + .kanban-card {
   border-top: 0.5px dashed gray;
   margin-top: 12px;
@@ -89,33 +124,50 @@
   cursor: move;
 }
 
-.application-card-company-name {
-  color: white;
-  font-size: 30px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.application-card-job-title {
-  color: white;
-  font-size: 20px;
-}
-
-.application-card-body {
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  gap: 5px;
-  color: gray;
-}
-
-.application-card-body button {
+.application-card button {
   background: transparent;
   border: none;
   padding: 0%;
   width: 24px;
   height: 24px;
   cursor: pointer;
+}
+
+.application-card-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.application-card-company-name {
+  font-family: var(--font-voice);
+  color: white;
+  font-size: 30px;
+  margin-top: 8px;
+  margin-bottom: 5px;
+}
+
+.application-card-job-title {
+  font-family: var(--font-sans);
+  color: white;
+  font-size: 20px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.application-card-body {
+  font-family: var(--font-mono);
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 5px;
+  color: gray;
+}
+.application-card-url a {
+  font-family: var(--font-mono);
+  color: gray;
+}
+.application-card-url a:hover {
+  color: rgba(128, 128, 128, 0.557);
 }
 
 .dialog-background {
@@ -169,8 +221,12 @@
 .create-application-form {
   display: flex;
   flex-direction: column;
+  background-color: #3d3d3d88;
+  font-family: var(--font-mono);
+  color: white;
   padding: var(--kanban-card-padding);
   gap: 10px;
+  border-radius: 4%;
 }
 
 .application-create-form-field label {

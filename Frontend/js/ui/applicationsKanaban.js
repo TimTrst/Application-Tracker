@@ -9,8 +9,8 @@ function createHTMLPhaseColumn(phase) {
 
   let phaseHeader = `<div class="kanban-column-header">`;
 
-  let phaseName = `<span>${phase["name"]}</span>`;
-  let numberOfApplications = `<div>${phase.applications.length}</div>`;
+  let phaseName = `<span class="kanban-column-header-phase-name">${phase["name"]}</span>`;
+  let numberOfApplications = `<div class="kanban-column-header-application-count">${phase.applications.length}</div>`;
 
   phaseColumnHtml += phaseHeader + phaseName + numberOfApplications + "</div>";
 

@@ -26,6 +26,15 @@ export function buildApplicationObject({
   return { company_name, job_title, url, status_id, date_appointment };
 }
 
+export async function loadIconSprite(url) {
+  const res = await fetch(url);
+  const svgText = await res.text();
+  const container = document.createElement("div");
+  container.style.display = "none";
+  container.innerHTML = svgText;
+  document.body.prepend(container);
+}
+
 export function loadIcon(iconName, className = "") {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   if (className) svg.setAttribute("class", className);
@@ -39,7 +48,7 @@ export function loadIconString(iconName, className = "") {
   // Gibt puren HTML-Text zurück
   return `
     <svg class="${className}" xmlns="http://www.w3.org/2000/svg">
-      <use href="assets/icons/icons.svg#${iconName}"></use>
+      <use href="#${iconName}"></use>
     </svg>
   `.trim();
 }

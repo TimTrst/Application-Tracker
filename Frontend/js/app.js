@@ -9,6 +9,7 @@ import {
 import { renderApplicationKanban } from "./ui/applicationsKanaban.js";
 import { createApplicationForm } from "./ui/createApplicationForm.js";
 import { responseNotification } from "./ui/responseNotification.js";
+import { loadIconSprite } from "./helper.js";
 
 let _statuses = [];
 let _phases = [];
@@ -45,6 +46,7 @@ async function refreshKanban(phases, statuses) {
 }
 
 async function init() {
+  await loadIconSprite("assets/icons/icons.svg");
   _phases = await getApplicationPhases();
   _statuses = await getApplicationStatuses();
 

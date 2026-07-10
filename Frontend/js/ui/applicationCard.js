@@ -11,8 +11,9 @@ export function fillApplicationCardHTML(application) {
                     <p class="application-card-company-name">
                         ${application.company_name}
                     </p>
-                    <p class="application-card-job-title">${application.job_title}</p>
+                    ${application.url ? `<a class="application-card-button-link" href="${application.url}">${loadIconString("icon-link", "icon-small")}</a>` : `<div></div>`}
                 </div>
+                <p class="application-card-job-title">${application.job_title}</p>
                 <div class="application-card-body">
                     <span class="application-card-date">
                         ${date}
@@ -25,7 +26,6 @@ export function fillApplicationCardHTML(application) {
                     <button class="application-card-button-change">${loadIconString("icon-edit", "icon-small")}</button>
                     <button class="application-card-button-delete">${loadIconString("icon-trash", "icon-small")}</button>                    
                 </div>
-                <span class="application-card-url">${application.url ?? ""}</span>
             </div>
         </div>
         `;
