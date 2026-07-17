@@ -61,22 +61,27 @@ export function createApplicationForm(
 // render the form
 function renderApplicationForm(statusesForPhase, application) {
   let date = "";
+  let isNewApplication = true;
 
   if (Object.keys(application).length !== 0) {
+    isNewApplication = false;
     date = formatDateString(application.application_appointment);
   }
 
   return `
     <form class="create-application-form">
-        <div>
+        <div class="create-application-form-header">
+          <span class="heading-text font-head">${isNewApplication ? "New application" : "Update application"}</span>
+        </div>
+        <div class="application-create-form-field">
           <label>
-            Company Name:
+            COMPANY:
             <input required minlength="3" maxlength="40" class="cname" name="cname" type="text" value="${application.company_name || ""}">
           </label>
         </div>
         <div class="application-create-form-field">
           <label>
-            Job Title:
+            JOB TITLE:
             <input required minlength="3" maxlength="40" class="jname" name="jname" type="text" value="${application.job_title || ""}">
           </label>
         </div>
@@ -86,25 +91,29 @@ function renderApplicationForm(statusesForPhase, application) {
             <input class="jurl" name="jurl" type="url" value="${application.url || ""}">
           </label>
         </div>
-        <div class="application-create-form-field">
-          <label>
-          Status:
-            <select class="astatus" name="status">
-                ${statusesForPhase
-                  .map((status) => {
-                    return `<option value="${status["id"]}" ${status.id === application?.status?.id ? "selected" : ""}>${status["name"]}</option>`;
-                  })
-                  .join("")}
-            </select>
-          </label>
+        <div class="application-create-status-and-appointment">
+          <div class="application-create-form-field">
+            <label>
+            STATUS:
+              <select class="astatus" name="status">
+                  ${statusesForPhase
+                    .map((status) => {
+                      return `<option value="${status["id"]}" ${status.id === application?.status?.id ? "selected" : ""}>${status["name"]}</option>`;
+                    })
+                    .join("")}
+              </select>
+            </label>
+          </div>
+          <div class="application-create-form-field">
+            <label>APOINTMENT:
+              <input class="jappointment" name="jappointment" type="date" value="${date}">
+            </label>
+          </div>
         </div>
-        <div class="application-create-form-field">
-          <label>Next Appointment:
-            <input class="jappointment" name="jappointment" type="date" value="${date}">
-          </label>
+        <div class="application-form-buttons">
+          <input class="application-form-submit" type="submit" value="SAVE &#8594;">
+          <button class="application-form-close" type="button">CANCEL</button>
         </div>
-        <input class="application-form-submit" type="submit" value="Submit">
-        <button class="application-form-close" type="button">Close</button>
     </form>
     `;
 }

@@ -27,6 +27,7 @@
   --font-sans: "Inter", system-ui, sans-serif;
   --font-voice: "Source Serif 4", Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-one: #8f8f8f;
 }
 .kanban-column-flex-container[data-phase-id="1"] {
   --accent: #d85a30;
@@ -49,6 +50,24 @@
   display: none !important;
 }
 
+.font-head {
+  font-family: var(--font-voice);
+}
+
+.font-body {
+  font-family: var(--font-sans);
+}
+
+.font-3 {
+  font-family: var(--font-mono);
+}
+
+.heading-text {
+  color: white;
+  font-size: 30px;
+  margin: 0;
+}
+
 #app-header {
   display: flex;
   flex-direction: row;
@@ -57,7 +76,7 @@
 
 #applications-list {
   display: flex;
-  border: 6px solid #4c4c4c;
+  border: 6px solid var(--color-one);
   border-radius: 2%;
   background-color: rgb(0, 0, 0);
   flex-direction: row;
@@ -70,7 +89,7 @@
 }
 
 .icon-small {
-  color: gray;
+  color: var(--color-one);
   width: 24px;
   height: 24px;
 }
@@ -100,7 +119,7 @@
 
 .kanban-column-header-application-count {
   font-family: var(--font-mono);
-  color: gray;
+  color: var(--color-one);
   font-size: large;
 }
 
@@ -113,7 +132,7 @@
 
 /* apply styling if two follow each other */
 .kanban-card + .kanban-card {
-  border-top: 0.5px dashed gray;
+  border-top: 0.5px dashed var(--color-one);
   margin-top: 12px;
   padding-top: 12px;
 }
@@ -136,12 +155,6 @@
 .application-card-header {
   display: flex;
   justify-content: space-between;
-}
-
-.application-card-company-name {
-  font-family: var(--font-voice);
-  color: white;
-  font-size: 30px;
   margin-top: 8px;
   margin-bottom: 5px;
 }
@@ -160,11 +173,11 @@
   justify-content: start;
   align-items: center;
   gap: 5px;
-  color: gray;
+  color: var(--color-one);
 }
 .application-card-url a {
   font-family: var(--font-mono);
-  color: gray;
+  color: var(--color-one);
 }
 .application-card-url a:hover {
   color: rgba(128, 128, 128, 0.557);
@@ -205,9 +218,9 @@
   min-height: 50px;
   margin: 30px;
   background: transparent;
-  border: 2px dashed gray;
+  border: 2px dashed var(--color-one);
   border-radius: 3%;
-  color: gray;
+  color: var(--color-one);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -221,7 +234,7 @@
 .create-application-form {
   display: flex;
   flex-direction: column;
-  background-color: #3d3d3d88;
+  background-color: none;
   font-family: var(--font-mono);
   color: white;
   padding: var(--kanban-card-padding);
@@ -229,10 +242,83 @@
   border-radius: 4%;
 }
 
+/* .create-application-form-header {
+} */
+.application-create-status-and-appointment {
+  gap: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.application-create-form-field {
+  flex: 1;
+  min-width: 0;
+  background-color: none;
+}
+
 .application-create-form-field label {
+  color: var(--color-one);
+  font-size: 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.application-create-form-field input,
+.application-create-form-field select {
+  font-family: var(--font-sans);
+  font-size: larger;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-one);
+  border-radius: 0;
+  outline: none;
+  color: white;
+}
+
+.application-create-form-field input:focus,
+.application-create-form-field select:focus {
+  border-bottom-color: var(--accent);
+}
+
+select option {
+  color: black;
+}
+
+/* this makes the calender icon next to the date picker reappear */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.application-form-buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.application-form-submit {
+  background-color: transparent;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: larger;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+/* .application-form-submit:hover {
+  background-color: rgb(186, 186, 186);
+} */
+
+.application-form-close {
+  background-color: transparent;
+  color: var(--color-one);
+  font-size: larger;
+  border: none;
+  outline: none;
+  cursor: pointer;
 }
 
 .response-notifications-container {

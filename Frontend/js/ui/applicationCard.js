@@ -8,7 +8,7 @@ export function fillApplicationCardHTML(application) {
         <div class="kanban-card">
             <div class="application-card" draggable="true" data-app-id="${application.id}">
                 <div class="application-card-header">
-                    <p class="application-card-company-name">
+                    <p class="heading-text font-head">
                         ${application.company_name}
                     </p>
                     ${application.url ? `<a class="application-card-button-link" href="${application.url}">${loadIconString("icon-link", "icon-small")}</a>` : `<div></div>`}
