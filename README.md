@@ -2,6 +2,8 @@
 
 A full-stack web app for tracking job applications on a Kanban-style board, built as a **learning project** to practice backend and frontend development close to industry best practices.
 
+**Dependency Inversion Principle**: Low-Level DB classes can be added (e.g. postgres) via DI and depend on high-level interface contracts.
+
 ![alt text](kanban_screenshot.png)
 
 > 🚧 **Work in progress.** The backend is complete and tested. The frontend (Kanban board) is actively being built out. See [Roadmap](#roadmap) below for what's next.
@@ -38,7 +40,7 @@ This isn't just an app to use, it's an app to learn from. Every architectural de
 
 ### Database
 
-A relational, 3-table SQLite schema:
+A relational, 3-table SQLite schema (Database layer can be replaced via adding low-level db connection classes and through dependency injection in higher level classes (Dependency Inversion Principle)):
 
 ```
 phase  →  status  →  application
@@ -47,13 +49,24 @@ phase  →  status  →  application
 - `UNIQUE` constraints prevent duplicate phases/statuses
 - Seed data is inserted idempotently (`INSERT OR IGNORE`)
 
-### Backend — ✅ Complete
+### Backend — 🚧 In Progress
+
+```
+backend/
+├── database/
+├── models/
+└── repositories/
+│    ├── interfaces/ → high level contracts that db layers need to fullfill
+│    ├── sqlite/     → sqlite db repositories implementing all behavior of the interface contract
+│    ├── dependencies/      → injects the DB connection layer and the DB repository class -> only place that needs to change if new DB repository/connection layer is added
+└── routes/
+```
 
 - One `APIRouter` per resource (applications, statuses, phases), registered in `main.py`
 - Pydantic v2 models split into **Read / Write / Update** variants, organized in a `models/` package
 - Shared field validators (e.g. "must not be empty", "must be positive") centralized in `models/helper.py`
 - Repository pattern: raw SQLite rows are mapped to validated Pydantic models via `model_validate()`
-- Database access via `Depends(get_db)` — a generator-based dependency that guarantees connection cleanup, even on errors
+- Database access via `dependencies.py`, which accepts a DB connection and a concrete DB class. All DB classes need to fullfill the interface contract specified in `interfaces/{interface_class}`
 - `PATCH` endpoints follow a **fetch → merge → save** pattern using `model_dump(exclude_unset=True)`, so partial updates only touch the fields actually sent
 - All routes are synchronous (`def`, not `async def`) — a deliberate choice given SQLite's threading model
 - The frontend is served directly by FastAPI via `StaticFiles`
@@ -76,6 +89,7 @@ frontend/
 
 **Working features:**
 
+- Swappable database conenction layer (switch from SQLite to PostgreSQL planned)
 - Kanban board: phases rendered as columns, applications as cards
 - Create, view, and delete applications through the UI
 - Inline card editing (an update form swaps in over the card in place)
@@ -127,21 +141,13 @@ API docs (Swagger UI) are available at `/docs` once the server is running.
 
 **Up next:**
 
-- [ ] Status badge color-coding by phase
+- DB table that logs the application history (to render visualizations, e.g. a river diagram)
 
 **Deferred for later:**
 
 - JWT authentication (admin-only CRUD for statuses/phases)
 - Pagination
-- A more abstract/generalized repository layer
-  - Changing the database management system (PostgreSQL instead of SQLite) before deployment
 - Automatically extract relevant information from the application descriptions by using their URL to extract relevant data from their page.
-
----
-
-## A note on the code
-
-Because this is a learning project, some parts may look intentionally simple rather than maximally "clever", proportionate complexity is a deliberate design value here, not an oversight. Bigger abstractions are introduced once the project actually grows into needing them, not before.
 
 ---
 

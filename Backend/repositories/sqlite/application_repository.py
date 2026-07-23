@@ -1,0 +1,148 @@
+import sqlite3
+import datetime
+from models.application import WriteApplication, UpdateApplication, ReadApplication
+from repositories.helper import url_to_httpurl
+from repositories.interfaces.application_repository import ApplicationRepository
+
+_BASE_APPLICATION_QUERY = """
+                SELECT
+                    application.id as id,
+                    application.company_name as company_name,
+                    application.job_title as job_title,
+                    application.URL as url,
+                    status.id as status_id,
+                    status.name as status_name,
+                    phase.id as phase_id,
+                    phase.name as phase_name,
+                    application.date_added as date_added,
+                    application.date_appointment as date_appointment
+                FROM application
+                    LEFT JOIN status ON application.status_id = status.id
+                    LEFT JOIN phase ON status.phase_id = phase.id
+                """
+
+_ORDER_APPLICATIONS_BY_DATE_NULL_LAST = (
+    """ORDER BY application.date_appointment NULLS LAST"""
+)
+
+
+class SqliteApplicationRepository(ApplicationRepository):
+    """sqlite3-backed implementation. Everything sqlite-specific (the
+    connection, the '?' placeholders, sqlite3.Row) lives only in here."""
+
+    def __init__(self, conn: sqlite3.Connection):
+        self._conn = conn
+
+    def get_all(self) -> list[ReadApplication]:
+        cursor = self._conn.cursor()
+        cursor.execute(_BASE_APPLICATION_QUERY + _ORDER_APPLICATIONS_BY_DATE_NULL_LAST)
+
+        rows = cursor.fetchall()
+
+        return [self._map_row_to_application(row) for row in rows]
+
+    def get_by_id(self, id: int) -> ReadApplication | None:
+        cursor = self._conn.cursor()
+        cursor.execute(_BASE_APPLICATION_QUERY + """WHERE application.id = ?""", (id,))
+
+        row = cursor.fetchone()
+
+        if not row:
+            return None
+
+        return self._map_row_to_application(row)
+
+    def add(self, new_application: WriteApplication) -> ReadApplication:
+        sql = """ INSERT INTO application(company_name,job_title,URL,status_id,date_added,date_appointment)
+                  VALUES(?,?,?,?,?,?) """
+
+        cursor = self._conn.cursor()
+        cursor.execute(
+            sql,
+            (
+                new_application.company_name,
+                new_application.job_title,
+                str(new_application.url) if new_application.url else None,
+                new_application.status_id,
+                datetime.datetime.now().date(),
+                new_application.date_appointment,
+            ),
+        )
+
+        self._conn.commit()
+
+        new_id = cursor.lastrowid
+
+        return self.get_by_id(new_id)
+
+    def remove(self, id: int) -> bool:
+        sql = """DELETE FROM application WHERE id = ?"""
+
+        cursor = self._conn.cursor()
+        cursor.execute(sql, (id,))
+        self._conn.commit()
+
+        if cursor.rowcount == 0:
+            return False
+        return True
+
+    def modify(
+        self, id: int, updated_application: UpdateApplication
+    ) -> ReadApplication | bool:
+        data_to_update = updated_application.model_dump(exclude_unset=True)
+
+        if not data_to_update:
+            return False
+
+        old_application = self.get_by_id(id)
+
+        merged_application = {
+            "company_name": old_application.company_name,
+            "job_title": old_application.job_title,
+            "url": old_application.url,
+            "status_id": old_application.status.id,
+            "date_appointment": old_application.date_appointment,
+        }
+
+        merged_application.update(data_to_update)
+
+        sql = """UPDATE application SET company_name = ?, job_title = ?, URL = ?, status_id = ?, date_appointment = ? WHERE id = ?"""
+
+        cursor = self._conn.cursor()
+
+        cursor.execute(
+            sql,
+            (
+                merged_application["company_name"],
+                merged_application["job_title"],
+                str(merged_application["url"]) if merged_application["url"] else None,
+                merged_application["status_id"],
+                merged_application["date_appointment"],
+                id,
+            ),
+        )
+
+        self._conn.commit()
+
+        return self.get_by_id(id)
+
+    @staticmethod
+    def _map_row_to_application(row: sqlite3.Row) -> ReadApplication:
+        application = {
+            "id": row["id"],
+            "company_name": row["company_name"],
+            "job_title": row["job_title"],
+            "url": url_to_httpurl(row["url"]),
+            "status": {
+                "id": row["status_id"],
+                "name": row["status_name"],
+                "phase": {
+                    "id": row["phase_id"],
+                    "name": row["phase_name"],
+                },
+            },
+            "date_added": row["date_added"],
+            "date_appointment": row["date_appointment"],
+        }
+
+        return ReadApplication.model_validate(application)
