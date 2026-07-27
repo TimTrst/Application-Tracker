@@ -2,7 +2,7 @@
 
 A full-stack web app for tracking job applications on a Kanban-style board, built as a **learning project** to practice backend and frontend development close to industry best practices.
 
-**Dependency Inversion Principle**: Low-Level DB classes can be added (e.g. postgres) via DI and depend on high-level interface contracts.
+**Dependency Inversion Principle**: the backend uses an Abstract Factory (`RepositoryFactory`) so new low-level DB classes (e.g. PostgreSQL) can be added purely through dependency injection, depending only on high-level interface contracts.
 
 ![alt text](kanban_screenshot.png)
 
@@ -40,7 +40,7 @@ This isn't just an app to use, it's an app to learn from. Every architectural de
 
 ### Database
 
-A relational, 3-table SQLite schema (Database layer can be replaced via adding low-level db connection classes and through dependency injection in higher level classes (Dependency Inversion Principle)):
+A relational, 3-table SQLite schema. The database layer sits behind an **abstract factory** (see the Backend section below), so a new backend can be added without touching routes or models:
 
 ```
 phase  →  status  →  application
@@ -55,10 +55,13 @@ phase  →  status  →  application
 backend/
 ├── database/
 ├── models/
-└── repositories/
-│    ├── interfaces/ → high level contracts that db layers need to fullfill
-│    ├── sqlite/     → sqlite db repositories implementing all behavior of the interface contract
-│    ├── dependencies/      → injects the DB connection layer and the DB repository class -> only place that needs to change if new DB repository/connection layer is added
+├── repositories/
+│   ├── interfaces/              → high-level contracts a DB backend must fulfill:
+│   │                               ApplicationRepository, StatusRepository, PhaseRepository,
+│   │                               and RepositoryFactory (bundles the three above)
+│   ├── sqlite/                  → SQLite's implementation of every interface, incl.
+│   │                               SqliteRepositoryFactory
+│   └── dependencies.py          → picks the active backend and exposes it to routes
 └── routes/
 ```
 
@@ -66,7 +69,8 @@ backend/
 - Pydantic v2 models split into **Read / Write / Update** variants, organized in a `models/` package
 - Shared field validators (e.g. "must not be empty", "must be positive") centralized in `models/helper.py`
 - Repository pattern: raw SQLite rows are mapped to validated Pydantic models via `model_validate()`
-- Database access via `dependencies.py`, which accepts a DB connection and a concrete DB class. All DB classes need to fullfill the interface contract specified in `interfaces/{interface_class}`
+- **Abstract Factory pattern** for database access: `RepositoryFactory` declares one method per resource (`application_repository()`, `status_repository()`, `phase_repository()`). Each backend implements it once (e.g. `SqliteRepositoryFactory`) to build all of its repositories around a single shared connection. `dependencies.py` selects the active factory via the `DATABASE_BACKEND` env var and injects it through FastAPI's `Depends()`, so routes only ever depend on the interfaces — never on a concrete DB class.
+  - **Why:** adding a new backend (e.g. PostgreSQL) means implementing the four interfaces and registering the new factory in `dependencies.py`'s provider map. No other file — not routes, not models, not `main.py` — needs to change.
 - `PATCH` endpoints follow a **fetch → merge → save** pattern using `model_dump(exclude_unset=True)`, so partial updates only touch the fields actually sent
 - All routes are synchronous (`def`, not `async def`) — a deliberate choice given SQLite's threading model
 - The frontend is served directly by FastAPI via `StaticFiles`
@@ -89,7 +93,6 @@ frontend/
 
 **Working features:**
 
-- Swappable database conenction layer (switch from SQLite to PostgreSQL planned)
 - Kanban board: phases rendered as columns, applications as cards
 - Create, view, and delete applications through the UI
 - Inline card editing (an update form swaps in over the card in place)
