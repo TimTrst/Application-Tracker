@@ -14,7 +14,6 @@ from repositories.interfaces.status_repository import StatusRepository
 from repositories.interfaces.phase_repository import PhaseRepository
 
 # Factory of concrete DB implementaiton
-from repositories.sqlite.sqlite_repository_factory import SqliteRepositoryFactory
 from repositories.sqlite.database_connection import get_sqlite_repository_factory
 
 # Maps a backend name to the FastAPI dependency that builds its
@@ -36,18 +35,18 @@ def get_application_repository(
     factory: RepositoryFactory = Depends(get_repository_factory),
 ) -> ApplicationRepository:
     # Injectable for routes: `repo: ApplicationRepository = Depends(get_application_repository)`.
-    return factory.application_repository()
+    return factory.create_application_repository()
 
 
 def get_status_repository(
     factory: RepositoryFactory = Depends(get_repository_factory),
 ) -> StatusRepository:
     # Injectable for routes: `repo: StatusRepository = Depends(get_status_repository)`.
-    return factory.status_repository()
+    return factory.create_status_repository()
 
 
 def get_phase_repository(
     factory: RepositoryFactory = Depends(get_repository_factory),
 ) -> PhaseRepository:
     # Injectable for routes: `repo: PhaseRepository = Depends(get_phase_repository)`.
-    return factory.phase_repository()
+    return factory.create_phase_repository()

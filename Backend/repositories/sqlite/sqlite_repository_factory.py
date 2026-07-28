@@ -17,11 +17,11 @@ class SqliteRepositoryFactory(RepositoryFactory):
     def __init__(self, conn):
         self.conn: sqlite3.Connection = conn
 
-    def application_repository(self) -> ApplicationRepository:
+    def create_application_repository(self) -> ApplicationRepository:
         return SqliteApplicationRepository(self.conn)
 
-    def status_repository(self) -> StatusRepository:
+    def create_status_repository(self) -> StatusRepository:
         return SqliteStatusRepository(self.conn)
 
-    def phase_repository(self) -> PhaseRepository:
+    def create_phase_repository(self) -> PhaseRepository:
         return SqlitePhaseRepository(self.conn)
