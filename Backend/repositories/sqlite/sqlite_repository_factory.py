@@ -4,9 +4,15 @@ from repositories.interfaces.repository_factory import RepositoryFactory
 from repositories.interfaces.application_repository import ApplicationRepository
 from repositories.interfaces.phase_repository import PhaseRepository
 from repositories.interfaces.status_repository import StatusRepository
+from repositories.interfaces.application_history_log_repository import (
+    ApplicationHistoryLogRepository,
+)
 from repositories.sqlite.application_repository import SqliteApplicationRepository
 from repositories.sqlite.status_repository import SqliteStatusRepository
 from repositories.sqlite.phase_repository import SqlitePhaseRepository
+from repositories.sqlite.application_history_log_repository import (
+    SqliteApplicationHistoryLogRepository,
+)
 
 
 # SQLite's concrete fulfilment of the RepositoryFactory contract. Built by
@@ -25,3 +31,6 @@ class SqliteRepositoryFactory(RepositoryFactory):
 
     def create_phase_repository(self) -> PhaseRepository:
         return SqlitePhaseRepository(self.conn)
+
+    def create_history_log_repository(self) -> ApplicationHistoryLogRepository:
+        return SqliteApplicationHistoryLogRepository(self.conn)

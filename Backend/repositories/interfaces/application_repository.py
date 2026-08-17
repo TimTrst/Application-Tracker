@@ -3,8 +3,7 @@ from models.application import WriteApplication, UpdateApplication, ReadApplicat
 
 
 class ApplicationRepository(ABC):
-    """Contract for storing/retrieving applications. No mention of sqlite,
-    connections, or SQL anywhere in here - that's the whole point."""
+    """Interface for storing/retrieving applications."""
 
     @abstractmethod
     def get_all(self) -> list[ReadApplication]: ...

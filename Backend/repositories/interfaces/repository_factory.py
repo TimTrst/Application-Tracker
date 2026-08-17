@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from repositories.interfaces.application_repository import ApplicationRepository
 from repositories.interfaces.status_repository import StatusRepository
 from repositories.interfaces.phase_repository import PhaseRepository
+from repositories.interfaces.application_history_log_repository import (
+    ApplicationHistoryLogRepository,
+)
 
 
 # Contract every DB backend must fulfil to be usable via dependencies.py.
@@ -18,3 +21,6 @@ class RepositoryFactory(ABC):
 
     @abstractmethod
     def create_phase_repository(self) -> PhaseRepository: ...
+
+    @abstractmethod
+    def create_history_log_repository(self) -> ApplicationHistoryLogRepository: ...

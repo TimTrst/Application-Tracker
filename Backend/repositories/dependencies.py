@@ -12,6 +12,9 @@ from repositories.interfaces.repository_factory import RepositoryFactory
 from repositories.interfaces.application_repository import ApplicationRepository
 from repositories.interfaces.status_repository import StatusRepository
 from repositories.interfaces.phase_repository import PhaseRepository
+from repositories.interfaces.application_history_log_repository import (
+    ApplicationHistoryLogRepository,
+)
 
 # Factory of concrete DB implementaiton
 from repositories.sqlite.database_connection import get_sqlite_repository_factory
@@ -50,3 +53,9 @@ def get_phase_repository(
 ) -> PhaseRepository:
     # Injectable for routes: `repo: PhaseRepository = Depends(get_phase_repository)`.
     return factory.create_phase_repository()
+
+
+def get_application_history_log_repository(
+    factory: RepositoryFactory = Depends(get_repository_factory),
+) -> ApplicationHistoryLogRepository:
+    return factory.create_history_log_repository()

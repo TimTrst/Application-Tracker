@@ -2,7 +2,19 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Response, status
 from typing import Annotated
 from models.application import ReadApplication, WriteApplication, UpdateApplication
 from repositories.interfaces.application_repository import ApplicationRepository
+from services.application_service import ApplicationService
+from services.dependencies import get_application_service
 from repositories.dependencies import get_application_repository
+
+# Two injectables are available for these routes:
+# - ApplicationRepository (get_application_repository): plain CRUD against
+#   the applications table only. Used below for reads/deletes, which have
+#   no side effects on other tables.
+# - ApplicationService (get_application_service): wraps an
+#   ApplicationRepository *and* an ApplicationHistoryLogRepository so that
+#   creating an application or changing its status also writes a history
+#   log entry. Used below for POST/PATCH, where a status/phase change must
+#   be tracked.
 
 router = APIRouter(tags=["applications"])
 
@@ -34,10 +46,10 @@ def read_application(
 @router.post("/", response_model=ReadApplication)
 def write_application(
     application: WriteApplication,
-    repo: ApplicationRepository = Depends(get_application_repository),
+    service: ApplicationService = Depends(get_application_service),
 ):
     try:
-        return repo.add(application)
+        return service.add(application)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -61,10 +73,10 @@ def delete_application(
 def update_application(
     id: Annotated[int, Path(gt=0)],
     updated_application: UpdateApplication,
-    repo: ApplicationRepository = Depends(get_application_repository),
+    service: ApplicationService = Depends(get_application_service),
 ):
     try:
-        result = repo.modify(id, updated_application)
+        result = service.modify(id, updated_application)
         if not result:
             raise HTTPException(status_code=404, detail="Application not found")
         return result

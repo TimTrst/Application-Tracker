@@ -70,7 +70,6 @@ class SqliteApplicationRepository(ApplicationRepository):
         )
 
         self._conn.commit()
-
         new_id = cursor.lastrowid
 
         return self.get_by_id(new_id)
@@ -124,7 +123,7 @@ class SqliteApplicationRepository(ApplicationRepository):
 
         self._conn.commit()
 
-        return self.get_by_id(id)
+        return old_application, self.get_by_id(id)
 
     @staticmethod
     def _map_row_to_application(row: sqlite3.Row) -> ReadApplication:
