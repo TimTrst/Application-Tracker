@@ -6,6 +6,7 @@ from models.application_history_log import (
 )
 from repositories.interfaces.application_history_log_repository import (
     ApplicationHistoryLogRepository,
+    ReadApplicationHistoryTransition,
 )
 
 
@@ -58,7 +59,7 @@ class SqliteApplicationHistoryLogRepository(ApplicationHistoryLogRepository):
                 new_history_log.application_id,
                 new_history_log.phase_id,
                 new_history_log.status_id,
-                datetime.datetime.now().date(),
+                datetime.datetime.now(),
             ),
         )
 
@@ -69,6 +70,24 @@ class SqliteApplicationHistoryLogRepository(ApplicationHistoryLogRepository):
         history_entry = self.get_by_id(new_id)
 
         return history_entry
+
+    def get_transitions(self) -> list[ReadApplicationHistoryTransition]:
+        sql = """
+           SELECT 
+                application_history_log.application_id AS application_id,
+                application_history_log.phase_id AS to_phase_id,
+                application_history_log.status_id AS to_status_id,
+                LAG(application_history_log.phase_id) OVER(PARTITION BY application_id ORDER BY occurred_at) AS from_phase_id,
+                LAG(application_history_log.status_id) OVER(PARTITION BY application_id ORDER BY occurred_at) AS from_status_id,
+                application_history_log.occurred_at AS occurred_at
+            FROM 
+                application_history_log;
+        """
+
+        cursor = self._conn.cursor()
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        return [self._map_row_to_transition(row) for row in rows]
 
     @staticmethod
     def _map_row_to_application_history_log(
@@ -84,3 +103,16 @@ class SqliteApplicationHistoryLogRepository(ApplicationHistoryLogRepository):
         }
 
         return ReadApplicationHistoryLog.model_validate(application_history_log)
+
+    @staticmethod
+    def _map_row_to_transition(row: sqlite3.Row) -> ReadApplicationHistoryTransition:
+        transition = {
+            "application_id": row["application_id"],
+            "from_phase_id": row["from_phase_id"],
+            "from_status_id": row["from_status_id"],
+            "to_phase_id": row["to_phase_id"],
+            "to_status_id": row["to_status_id"],
+            "occurred_at": row["occurred_at"],
+        }
+
+        return ReadApplicationHistoryTransition.model_validate(transition)

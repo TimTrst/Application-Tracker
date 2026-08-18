@@ -12,7 +12,7 @@ DATABASE_NAME = BASE_DIR / "database" / os.getenv("DATABASE_NAME_SQLITE")
 
 
 def get_sqlite_repository_factory():
-    conn = sqlite3.connect(DATABASE_NAME)
+    conn = sqlite3.connect(DATABASE_NAME, check_same_thread=False)
     conn.row_factory = sqlite3.Row
 
     # enable foreign keys constraints for current connection (does not persist - runs on each new connection)

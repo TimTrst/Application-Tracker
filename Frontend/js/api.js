@@ -60,6 +60,11 @@ export async function updateApplication(updatedApplication, id) {
   return await handleRequestReponse(response, REQUEST_TYPE.PATCH);
 }
 
+export async function getHistoryLogTransitions() {
+  const response = await fetch(`${CONFIG.API_BASE_URL}/api/log/transitions`);
+  return await handleRequestReponse(response, REQUEST_TYPE.GET);
+}
+
 async function handleRequestReponse(response, requestTypeString) {
   let responseJson = {};
   if (response.status !== 204) {

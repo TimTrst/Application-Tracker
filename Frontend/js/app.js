@@ -5,10 +5,12 @@ import {
   postApplication,
   deleteApplication,
   updateApplication,
+  getHistoryLogTransitions,
 } from "./api.js";
 import { renderApplicationKanban } from "./ui/applicationsKanaban.js";
 import { createApplicationForm } from "./ui/createApplicationForm.js";
 import { responseNotification } from "./ui/responseNotification.js";
+import { renderSankeyDiagram } from "./ui/sankeyDiagram.js";
 import { loadIconSprite } from "./helper.js";
 
 let _statuses = [];
@@ -45,12 +47,18 @@ async function refreshKanban(phases, statuses) {
   );
 }
 
+async function refreshSankey(phases, statuses) {
+  const history_log_transitions = await getHistoryLogTransitions();
+  renderSankeyDiagram(history_log_transitions, phases, statuses);
+}
+
 async function init() {
   await loadIconSprite("assets/icons/icons.svg");
   _phases = await getApplicationPhases();
   _statuses = await getApplicationStatuses();
 
   refreshKanban(_phases, _statuses);
+  refreshSankey(_phases, _statuses);
 }
 
 init();

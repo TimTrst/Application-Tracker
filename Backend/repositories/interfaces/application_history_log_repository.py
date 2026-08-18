@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from models.application_history_log import (
     BaseApplicationHistoryLog,
     ReadApplicationHistoryLog,
+    ReadApplicationHistoryTransition,
 )
 
 
@@ -15,3 +16,6 @@ class ApplicationHistoryLogRepository(ABC):
     def add(
         self, new_history_log: BaseApplicationHistoryLog
     ) -> ReadApplicationHistoryLog: ...
+
+    @abstractmethod
+    def get_transitions(self) -> list[ReadApplicationHistoryTransition]: ...
