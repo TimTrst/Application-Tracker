@@ -6,7 +6,11 @@ A full-stack web app for tracking job applications on a Kanban-style board, buil
 
 ![alt text](kanban_screenshot.png)
 
-> 🚧 **Work in progress.** Core CRUD (applications, statuses, phases) is complete and tested. The application history log — the foundation for a Sankey diagram of each application's journey — is partway in: schema and create-path are done, status-change logging and the visualization itself are not. See [Roadmap](#roadmap) below for what's next.
+**Sankey-Diagram synchronized via a history log** - Currently updated on every application status change.
+(There might be some issues left, needs testing. The only phase 'Offer Extended' in phase 3 is currently incorrect and needs adjustment. The core logic works though.)
+
+- _The data of screenshot 1 above does currently NOT match the sankey diagram shown below_
+  ![alt text](sankey_screenshot.png)
 
 ---
 

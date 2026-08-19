@@ -338,3 +338,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-top: 10px;
   padding: 10px;
 }
+
+/* SANKEY DIAGRAM */
+#sankey-diagram {
+  margin: 140px;
+}

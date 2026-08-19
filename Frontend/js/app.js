@@ -49,7 +49,7 @@ async function refreshKanban(phases, statuses) {
 
 async function refreshSankey(phases, statuses) {
   const history_log_transitions = await getHistoryLogTransitions();
-  renderSankeyDiagram(history_log_transitions, phases, statuses);
+  renderSankeyDiagram(history_log_transitions.data, phases, statuses);
 }
 
 async function init() {
